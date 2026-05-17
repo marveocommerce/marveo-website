@@ -80,7 +80,15 @@ export function Footer() {
         {/* Bottom row */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-white/5">
           <p className="text-xs text-text-muted">
-            © {new Date().getFullYear()} Marvéo. All rights reserved. Built by Avario.
+            &copy; {new Date().getFullYear()} Marvéo. All rights reserved. Built by{" "}
+            <a
+              href="https://avariodigitals.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:text-accent-bright transition-colors"
+            >
+              Avario Digitals
+            </a>
           </p>
           <div className="flex items-center gap-5">
             {["Privacy", "Terms", "Cookies"].map((item) => (

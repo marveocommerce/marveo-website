@@ -1,20 +1,58 @@
-@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+  /* ── Fonts ──────────────────────────────────────── */
+  --font-display: var(--font-syne);
+  --font-body: var(--font-dm-sans);
+  --font-mono: var(--font-dm-mono);
 
-:root {
-  --font-syne: "Syne", sans-serif;
-  --font-dm-sans: "DM Sans", sans-serif;
-  --font-dm-mono: "DM Mono", monospace;
+  /* ── Background colours ─────────────────────────── */
+  --color-bg-primary:   #06060F;
+  --color-bg-secondary: #0C0C1A;
+  --color-bg-card:      #0F0F1E;
+  --color-bg-elevated:  #141425;
+
+  /* ── Text colours ───────────────────────────────── */
+  --color-text-primary:   #F0F2FF;
+  --color-text-secondary: #7A8299;
+  --color-text-muted:     #4A5168;
+  --color-text-accent:    #4F8EF7;
+
+  /* ── Accent colours ─────────────────────────────── */
+  --color-accent:       #4F8EF7;
+  --color-accent-dim:   #1E3360;
+  --color-accent-bright:#7EB3FF;
+
+  /* ── Feedback colours ───────────────────────────── */
+  --color-success: #34D399;
+  --color-warning: #F59E0B;
+  --color-error:   #F87171;
+
+  /* ── Background images ──────────────────────────── */
+  --background-image-radial-glow: radial-gradient(
+    ellipse 80% 50% at 50% -10%,
+    rgba(79, 142, 247, 0.15),
+    transparent
+  );
+
+  /* ── Animations ─────────────────────────────────── */
+  --animate-glow-pulse: glowPulse 3s ease-in-out infinite;
+  --animate-fade-up:    fadeUp 0.6s ease forwards;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* ── Keyframes ──────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.8; }
+}
+
+/* ── Base resets ────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
 html {
   scroll-behavior: smooth;
@@ -25,7 +63,7 @@ html {
 body {
   background-color: #06060F;
   color: #F0F2FF;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-dm-sans, sans-serif);
   line-height: 1.6;
   overflow-x: hidden;
 }
@@ -35,57 +73,76 @@ body {
   color: #F0F2FF;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: #06060F; }
+::-webkit-scrollbar-thumb { background: #1A1A2E; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2A2A3E; }
+
+/* ── Custom utilities ───────────────────────────────── */
+
+@utility text-gradient {
+  background: linear-gradient(135deg, #F0F2FF 0%, #7EB3FF 60%, #4F8EF7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
-::-webkit-scrollbar-track {
-  background: #06060F;
-}
-::-webkit-scrollbar-thumb {
-  background: #1A1A2E;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #2A2A3E;
+
+@utility text-gradient-subtle {
+  background: linear-gradient(135deg, #F0F2FF 0%, #A0B4D0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-@layer utilities {
-  .text-gradient {
-    background: linear-gradient(135deg, #F0F2FF 0%, #7EB3FF 60%, #4F8EF7 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+@utility border-glow {
+  border: 1px solid rgba(79, 142, 247, 0.25);
+  box-shadow:
+    0 0 20px rgba(79, 142, 247, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
 
-  .text-gradient-subtle {
-    background: linear-gradient(135deg, #F0F2FF 0%, #A0B4D0 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+@utility card-surface {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
 
-  .border-glow {
-    border: 1px solid rgba(79, 142, 247, 0.25);
-    box-shadow: 0 0 20px rgba(79, 142, 247, 0.08), inset 0 1px 0 rgba(255,255,255,0.06);
-  }
-
-  .card-surface {
-    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-    border: 1px solid rgba(255,255,255,0.07);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
-  }
-
-  .card-surface-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .card-surface-hover:hover {
+@utility card-surface-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  &:hover {
     border-color: rgba(79, 142, 247, 0.25);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(79,142,247,0.2), 0 0 20px rgba(79,142,247,0.06);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(79, 142, 247, 0.2),
+      0 0 20px rgba(79, 142, 247, 0.06);
     transform: translateY(-2px);
   }
+}
 
-  .noise-overlay::before {
+@utility grid-bg {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+@utility section-spacing {
+  padding-top: 7rem;
+  padding-bottom: 7rem;
+  @media (max-width: 768px) {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+
+@utility noise-overlay {
+  &::before {
     content: "";
     position: fixed;
     inset: 0;
@@ -93,21 +150,5 @@ body {
     pointer-events: none;
     z-index: 9999;
     opacity: 0.4;
-  }
-
-  .grid-bg {
-    background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
-
-  .section-spacing {
-    padding: 7rem 0;
-  }
-
-  @media (max-width: 768px) {
-    .section-spacing {
-      padding: 4rem 0;
-    }
   }
 }
