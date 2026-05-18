@@ -2,15 +2,7 @@ import { CheckCircle2, Activity } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PageHero } from "@/components/shared/PageHero";
-
-const SERVICES = [
-  { name: "Marvéo Dashboard",       status: "operational", uptime: "99.98%" },
-  { name: "Deployment Engine",      status: "operational", uptime: "99.95%" },
-  { name: "WordPress Connector API",status: "operational", uptime: "100%"   },
-  { name: "Template CDN",           status: "operational", uptime: "100%"   },
-  { name: "Authentication Service", status: "operational", uptime: "99.99%" },
-  { name: "Vercel Edge Network",    status: "operational", uptime: "100%"   },
-];
+import { STATUS_SERVICES } from "@/constants";
 
 export default function StatusPage() {
   return (
@@ -31,15 +23,22 @@ export default function StatusPage() {
             </div>
           </div>
           <div className="space-y-3">
-            {SERVICES.map((s) => (
+            {STATUS_SERVICES.map((s) => (
               <div key={s.name} className="card-surface rounded-xl p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-success" />
+                  <div className={`w-2 h-2 rounded-full ${
+                    s.status === "operational" ? "bg-success" :
+                    s.status === "degraded"    ? "bg-warning animate-pulse" : "bg-error animate-pulse"
+                  }`} />
                   <span className="text-sm text-text-secondary">{s.name}</span>
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="text-xs font-mono text-text-muted">{s.uptime} uptime</span>
-                  <span className="text-xs font-mono text-success px-2 py-0.5 rounded-md bg-success/10 border border-success/15">
+                  <span className={`text-xs font-mono px-2 py-0.5 rounded-md border ${
+                    s.status === "operational"
+                      ? "text-success bg-success/10 border-success/15"
+                      : "text-warning bg-warning/10 border-warning/15"
+                  }`}>
                     {s.status}
                   </span>
                 </div>

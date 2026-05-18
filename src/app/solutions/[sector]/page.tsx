@@ -5,29 +5,16 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PageHero } from "@/components/shared/PageHero";
 import { GlowOrb } from "@/components/shared/GlowOrb";
-import { SECTORS, TEMPLATE_PREVIEWS } from "@/constants";
+import {
+  SECTORS,
+  TEMPLATE_PREVIEWS,
+  SECTOR_PAIN_POINTS,
+  SECTOR_SOLUTIONS,
+} from "@/constants";
 import type { Metadata } from "next";
 
 const ICONS: Record<string, React.ElementType> = {
   Building2, ShoppingBag, MapPin, Heart, GraduationCap, Zap,
-};
-
-const PAIN_POINTS: Record<string, string[]> = {
-  corporate:    ["Generic templates that look like every other business", "Expensive agency builds with long timelines", "No easy way to update content without a developer"],
-  ecommerce:    ["WooCommerce setups that take weeks to configure", "Disconnected payment and product management", "Poor mobile performance hurting conversions"],
-  "real-estate":["Property listings that look outdated", "Inquiry forms that don't convert", "No easy way to manage multiple agent profiles"],
-  healthcare:   ["Clinic websites that feel impersonal and outdated", "No integrated appointment booking flow", "Compliance concerns with generic templates"],
-  education:    ["LMS setups that are complex and expensive", "Poor student onboarding experiences", "Disconnected course and instructor management"],
-  landing:      ["Low-converting pages built by non-specialists", "Slow load times killing ad campaign ROI", "No WhatsApp or lead capture integrations"],
-};
-
-const SOLUTIONS: Record<string, string[]> = {
-  corporate:    ["Deploy a polished corporate site in under an hour", "Full blog and content management through Marvéo", "Easy updates without touching code"],
-  ecommerce:    ["WooCommerce-ready templates with pre-built product flows", "Centralised inventory, checkout and order management", "Conversion-optimised layouts built on real data"],
-  "real-estate":["Dynamic property listing engine with filters", "Agent profile management from your dashboard", "Inquiry routing and CRM-ready contact forms"],
-  healthcare:   ["Appointment booking flows built-in from day one", "Provider profiles and service page templates", "HIPAA-conscious architecture and data handling"],
-  education:    ["LMS-ready templates with course and module layouts", "Student onboarding flows and instructor pages", "Integration-ready for Teachable, LearnDash, and more"],
-  landing:      ["High-conversion single-page layouts by specialists", "WhatsApp chat, lead forms, and booking integrations", "Lightning-fast load times optimised for paid ads"],
 };
 
 export async function generateStaticParams() {
@@ -57,10 +44,10 @@ export default async function SectorPage({
   const sectorData = SECTORS.find((s) => s.id === sector);
   if (!sectorData) notFound();
 
-  const Icon = ICONS[sectorData.icon];
+  const Icon      = ICONS[sectorData.icon];
   const templates = TEMPLATE_PREVIEWS.filter((t) => t.sector === sectorData.label);
-  const pains     = PAIN_POINTS[sector]    || [];
-  const solutions = SOLUTIONS[sector]      || [];
+  const pains     = SECTOR_PAIN_POINTS[sector]   ?? [];
+  const solutions = SECTOR_SOLUTIONS[sector]     ?? [];
 
   return (
     <>
@@ -72,10 +59,9 @@ export default async function SectorPage({
           description={sectorData.description}
         />
 
-        {/* Pain points vs solutions */}
         <section className="max-w-7xl mx-auto px-6 py-16">
+          {/* Pain vs Solution */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
-            {/* Pain */}
             <div className="card-surface rounded-2xl p-8">
               <div className="text-xs font-mono text-error mb-5 uppercase tracking-widest">The problem</div>
               <div className="space-y-4">
@@ -87,7 +73,6 @@ export default async function SectorPage({
                 ))}
               </div>
             </div>
-            {/* Solution */}
             <div className="card-surface border-glow rounded-2xl p-8">
               <div className="text-xs font-mono text-success mb-5 uppercase tracking-widest">The Marvéo solution</div>
               <div className="space-y-4">
@@ -106,8 +91,7 @@ export default async function SectorPage({
             <div className="text-xs font-mono text-text-muted uppercase tracking-widest mb-5">Included features</div>
             <div className="flex flex-wrap gap-2">
               {sectorData.tags.map((tag) => (
-                <span key={tag}
-                  className="px-4 py-2 rounded-xl text-sm font-medium border"
+                <span key={tag} className="px-4 py-2 rounded-xl text-sm font-medium border"
                   style={{ color: sectorData.color, background: `${sectorData.color}10`, borderColor: `${sectorData.color}25` }}>
                   {tag}
                 </span>
@@ -132,7 +116,7 @@ export default async function SectorPage({
                       </div>
                     </div>
                     <div className="font-semibold text-text-primary text-sm mb-3">{tpl.name}</div>
-                    <Link href={`/templates`}
+                    <Link href="/templates"
                       className="flex items-center gap-1.5 text-xs font-medium transition-colors"
                       style={{ color: sectorData.color }}>
                       Deploy <ArrowRight className="w-3 h-3" />

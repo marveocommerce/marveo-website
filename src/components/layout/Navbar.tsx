@@ -55,16 +55,16 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* CTA */}
+          {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
             <Link
-              href="/login"
+              href={`${siteConfig.appUrl}/login`}
               className="text-sm text-text-secondary hover:text-text-primary transition-colors font-medium"
             >
               Login
             </Link>
             <Link
-              href="/setup/activate"
+              href={`${siteConfig.appUrl}/setup/activate`}
               className="group flex items-center gap-1.5 px-4 py-2 bg-accent hover:bg-accent-bright text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-[0_0_20px_rgba(79,142,247,0.3)]"
             >
               Start Deployment
@@ -106,13 +106,15 @@ export function Navbar() {
               ))}
               <div className="pt-3 border-t border-white/7 space-y-2">
                 <Link
-                  href="/login"
+                  href={`${siteConfig.appUrl}/login`}
+                  onClick={() => setMobileOpen(false)}
                   className="flex w-full items-center px-4 py-3 rounded-xl text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-sm font-medium"
                 >
                   Login
                 </Link>
                 <Link
-                  href="/setup/activate"
+                  href={`${siteConfig.appUrl}/setup/activate`}
+                  onClick={() => setMobileOpen(false)}
                   className="flex w-full items-center justify-center gap-2 px-4 py-3 bg-accent text-white text-sm font-semibold rounded-xl"
                 >
                   Start Deployment <ChevronRight className="w-4 h-4" />

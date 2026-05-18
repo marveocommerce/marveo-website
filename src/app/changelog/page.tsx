@@ -1,12 +1,7 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PageHero } from "@/components/shared/PageHero";
-
-const ENTRIES = [
-  { version: "v1.0.0", date: "May 2026",  tag: "Launch",       changes: ["Initial Marvéo platform launch", "WordPress Connector Plugin v1.0", "Corporate, Ecommerce, Real Estate templates", "Vercel deployment integration", "Token-based authentication system"] },
-  { version: "v0.9.0", date: "Apr 2026",  tag: "Beta",         changes: ["Private beta with select agencies", "Headless WordPress support added", "Template marketplace architecture", "GitHub sync integration"] },
-  { version: "v0.5.0", date: "Mar 2026",  tag: "Alpha",        changes: ["Core Engine scaffolded", "Initial plugin connection flow", "Dashboard UI foundation"] },
-];
+import { CHANGELOG_ENTRIES } from "@/constants";
 
 export default function ChangelogPage() {
   return (
@@ -22,15 +17,17 @@ export default function ChangelogPage() {
           <div className="relative">
             <div className="absolute left-[19px] top-0 bottom-0 w-px bg-gradient-to-b from-accent/40 via-white/8 to-transparent" />
             <div className="space-y-10">
-              {ENTRIES.map((entry) => (
+              {CHANGELOG_ENTRIES.map((entry) => (
                 <div key={entry.version} className="flex gap-6">
                   <div className="w-10 shrink-0 flex flex-col items-center pt-1">
                     <div className="w-2.5 h-2.5 rounded-full bg-accent border-2 border-bg-primary" />
                   </div>
                   <div className="flex-1 pb-2">
-                    <div className="flex items-center gap-3 mb-4">
+                    <div className="flex items-center gap-3 mb-4 flex-wrap">
                       <span className="font-display font-700 text-text-primary">{entry.version}</span>
-                      <span className="text-xs font-mono px-2 py-0.5 rounded-md bg-accent/10 text-accent border border-accent/20">{entry.tag}</span>
+                      <span className="text-xs font-mono px-2 py-0.5 rounded-md bg-accent/10 text-accent border border-accent/20">
+                        {entry.tag}
+                      </span>
                       <span className="text-xs text-text-muted">{entry.date}</span>
                     </div>
                     <div className="card-surface rounded-2xl p-5 space-y-2">
