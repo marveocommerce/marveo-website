@@ -7,11 +7,17 @@ export const siteConfig = {
   ogImage: "/og.png",
 
   /*
-   * appUrl — the external Marvéo application (Rapheal's Core Engine).
-   * Update this once the app domain is live.
-   * Used by: Navbar Login + Start Deployment CTAs
+   * appUrl — the external Marvéo platform application.
+   * Leave empty ("") while the platform is not yet deployed.
+   * Once the platform domain is confirmed and live, update this value.
+   *
+   * Effect on Navbar:
+   *   Empty  → Login goes to /login   | Start Deployment goes to /contact
+   *   Set    → Both buttons open the live platform in a new tab
+   *
+   * Used by: src/components/layout/Navbar.tsx
    */
-  appUrl: "https://app.marveo.co",
+  appUrl: "",
 
   links: {
     github:  "https://github.com/marveocommerce",
@@ -21,14 +27,15 @@ export const siteConfig = {
   },
 
   /*
-   * nav — desktop + mobile navigation items.
-   * Add, remove, or reorder here; Navbar picks them up automatically.
+   * nav — desktop and mobile navigation items.
+   * Add, remove, or reorder entries here.
+   * The Navbar component reads this array automatically.
    */
   nav: [
-    { label: "Product",   href: "/product"   },
-    { label: "Templates", href: "/templates" },
+    { label: "Product",   href: "/product"            },
+    { label: "Templates", href: "/templates"           },
     { label: "Solutions", href: "/solutions/corporate" },
-    { label: "Docs",      href: "/docs"      },
-    { label: "Pricing",   href: "/pricing"   },
+    { label: "Docs",      href: "/docs"                },
+    { label: "Pricing",   href: "/pricing"             },
   ],
 };

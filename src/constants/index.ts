@@ -2,10 +2,18 @@
 // MARVÉO — Central Content Store
 // ============================================================
 // This is the single source of truth for ALL content on the
-// Marvéo website. Edit here; pages read from here.
+// Marvéo website. Edit values here; pages read from here.
 //
-// When Rapheal's Core Engine API is ready, replace each
-// export with an async fetch() call — no page files change.
+// API-READY ARCHITECTURE:
+// When the Marvéo platform API is live, replace each export
+// with an async fetch() call pointing to the API endpoint.
+// No page files will need to change — only this file.
+//
+// Example migration (when API is ready):
+//   Before: export const TEMPLATE_PREVIEWS = [ ...static data ]
+//   After:  export async function getTemplates() {
+//             return fetch(`${process.env.NEXT_PUBLIC_MARVEO_API_URL}/templates`)
+//           }
 // ============================================================
 
 
@@ -120,6 +128,8 @@ export const ECOSYSTEM_TYPES = [
 
 
 // ── Templates ────────────────────────────────────────────────
+// Add or update templates here.
+// Future: replace with GET /api/templates from the platform API.
 export const TEMPLATE_PREVIEWS = [
   { id: 1,  name: "Nexus Corporate",    sector: "Corporate",     tags: ["Business", "Agency"],     featured: true  },
   { id: 2,  name: "Cartify Pro",        sector: "Ecommerce",     tags: ["Retail", "Fashion"],      featured: true  },
@@ -141,12 +151,12 @@ export const TEMPLATE_PREVIEWS = [
 
 // ── Why Marvéo features ──────────────────────────────────────
 export const WHY_FEATURES = [
-  { icon: "Shield",    label: "Security First",       description: "Token-based validation and passwordless architecture. No credentials stored." },
-  { icon: "Zap",       label: "Instant Deployments",  description: "Go from setup to live in minutes, not days. Automated provisioning from day one." },
-  { icon: "RefreshCw", label: "Fast Rollbacks",        description: "Independent deployment pipelines mean you can roll back any environment without touching others." },
-  { icon: "Layers",    label: "Modular by Design",    description: "Every component is reusable and CMS-ready. Build once, deploy anywhere." },
-  { icon: "BarChart2", label: "Centralized Ops",      description: "One workspace for all clients, all environments, all deployments. No fragmentation." },
-  { icon: "Globe",     label: "Multi-platform",       description: "WordPress, Headless, Next.js, or custom stacks. Marvéo meets your infrastructure where it is." },
+  { icon: "Shield",    label: "Security First",      description: "Token-based validation and passwordless architecture. No credentials stored." },
+  { icon: "Zap",       label: "Instant Deployments", description: "Go from setup to live in minutes, not days. Automated provisioning from day one." },
+  { icon: "RefreshCw", label: "Fast Rollbacks",      description: "Independent deployment pipelines mean you can roll back any environment without touching others." },
+  { icon: "Layers",    label: "Modular by Design",   description: "Every component is reusable and CMS-ready. Build once, deploy anywhere." },
+  { icon: "BarChart2", label: "Centralized Ops",     description: "One workspace for all clients, all environments, all deployments. No fragmentation." },
+  { icon: "Globe",     label: "Multi-platform",      description: "WordPress, Headless, Next.js, or custom stacks. Marvéo meets your infrastructure where it is." },
 ];
 
 
@@ -188,7 +198,8 @@ export const DEPLOYMENT_STEPS = [
 
 
 // ── Sector Pain Points ───────────────────────────────────────
-// Edit per-sector pain points here. Shown on /solutions/[sector]
+// Edit per-sector problems shown on /solutions/[sector].
+// Future: replace with GET /api/sectors/:id from the platform API.
 export const SECTOR_PAIN_POINTS: Record<string, string[]> = {
   corporate: [
     "Generic templates that look like every other business",
@@ -224,7 +235,8 @@ export const SECTOR_PAIN_POINTS: Record<string, string[]> = {
 
 
 // ── Sector Solutions ─────────────────────────────────────────
-// Edit per-sector Marvéo solutions here. Shown on /solutions/[sector]
+// Edit per-sector Marvéo solutions shown on /solutions/[sector].
+// Future: replace with GET /api/sectors/:id from the platform API.
 export const SECTOR_SOLUTIONS: Record<string, string[]> = {
   corporate: [
     "Deploy a polished corporate site in under an hour",
@@ -260,8 +272,8 @@ export const SECTOR_SOLUTIONS: Record<string, string[]> = {
 
 
 // ── Pricing Plans ────────────────────────────────────────────
-// Edit plan names, prices, and features here.
-// Shown on /pricing
+// Edit plan names, prices, and feature lists here.
+// Future: replace with GET /api/pricing from the platform API.
 export const PRICING_PLANS = [
   {
     id: "starter",
@@ -323,7 +335,8 @@ export const PRICING_PLANS = [
 
 
 // ── Changelog Entries ────────────────────────────────────────
-// Add new releases here. Shown on /changelog
+// Add new releases at the top of this array.
+// Future: replace with GET /api/changelog from the platform API.
 export const CHANGELOG_ENTRIES = [
   {
     version: "v1.0.0",
@@ -362,7 +375,8 @@ export const CHANGELOG_ENTRIES = [
 
 
 // ── Career Roles ─────────────────────────────────────────────
-// Add, edit, or remove open roles here. Shown on /careers
+// Add, edit, or remove open roles here.
+// Future: replace with GET /api/careers from the platform API.
 export const CAREER_ROLES = [
   { title: "Senior Frontend Engineer", team: "Engineering",    location: "Remote", type: "Full-time" },
   { title: "Full-Stack Engineer",      team: "Engineering",    location: "Remote", type: "Full-time" },
@@ -372,7 +386,9 @@ export const CAREER_ROLES = [
 
 
 // ── Status Services ──────────────────────────────────────────
-// Update statuses here when incidents occur. Shown on /status
+// Update status values here during incidents.
+// Accepted status values: "operational" | "degraded" | "outage"
+// Future: replace with GET /api/status from a live monitoring service.
 export const STATUS_SERVICES = [
   { name: "Marvéo Dashboard",        status: "operational", uptime: "99.98%" },
   { name: "Deployment Engine",       status: "operational", uptime: "99.95%" },
@@ -384,7 +400,7 @@ export const STATUS_SERVICES = [
 
 
 // ── About Page Values ────────────────────────────────────────
-// Edit company values here. Shown on /about
+// Edit company values shown on /about.
 export const ABOUT_VALUES = [
   {
     icon: "Target",
@@ -405,7 +421,7 @@ export const ABOUT_VALUES = [
 
 
 // ── Product Layers ───────────────────────────────────────────
-// Edit the four Marvéo platform layers here. Shown on /product
+// Edit the four Marvéo platform layers shown on /product.
 export const PRODUCT_LAYERS = [
   {
     icon: "Cpu",
@@ -479,7 +495,7 @@ export const PRODUCT_LAYERS = [
 
 
 // ── Docs Sections ────────────────────────────────────────────
-// Edit documentation categories here. Shown on /docs
+// Edit documentation hub categories shown on /docs.
 export const DOC_SECTIONS = [
   {
     icon: "BookOpen",
@@ -506,7 +522,7 @@ export const DOC_SECTIONS = [
 
 
 // ── Contact Options ──────────────────────────────────────────
-// Edit contact card options here. Shown on /contact
+// Edit contact card options shown on /contact.
 export const CONTACT_OPTIONS = [
   {
     icon: "Calendar",
