@@ -16,6 +16,12 @@ type LeadPayload = {
   pagePath?: string;
 };
 
+type LeadSubmission = LeadPayload & {
+  ip: string;
+  userAgent: string;
+  createdAt: string;
+};
+
 const MAX_MESSAGE_LENGTH = 2000;
 
 function normalizeString(value: unknown, max = 140) {
@@ -30,7 +36,7 @@ function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-async function sendWebhook(url: string, payload: Record<string, unknown>) {
+async function sendWebhook(url: string, payload: LeadSubmission) {
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -59,11 +65,11 @@ function getAdminRecipient(kind: LeadKind, inquiryType?: string): string {
   return process.env.LEADS_ALERT_EMAIL!;
 }
 
-async function sendAdminAndConfirmationEmails(payload: Record<string, unknown>) {
-  const kind = payload.kind === "waitlist" ? "Waiting List" : "Contact";
+async function sendAdminAndConfirmationEmails(payload: LeadSubmission) {
+  const kindLabel = payload.kind === "waitlist" ? "Waiting List" : "Contact";
   const adminTo = getAdminRecipient(payload.kind, payload.inquiryType);
   const summary = [
-    `Type: ${kind}`,
+    `Type: ${kindLabel}`,
     `Email: ${String(payload.email ?? "")}`,
     payload.name ? `Name: ${String(payload.name)}` : "",
     payload.company ? `Company: ${String(payload.company)}` : "",
@@ -80,7 +86,7 @@ async function sendAdminAndConfirmationEmails(payload: Record<string, unknown>) 
   // Admin alert (plain text)
   await sendMail({
     to: adminTo,
-    subject: `${kind} submission from ${String(payload.email)}`,
+    subject: `${kindLabel} submission from ${String(payload.email)}`,
     text: summary,
     html: `<pre style="font-size:1rem;line-height:1.6;font-family:monospace;white-space:pre-wrap;">${summary}</pre>`
   });
@@ -132,7 +138,7 @@ export async function POST(request: Request) {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     const userAgent = request.headers.get("user-agent") || "unknown";
 
-    const payload = {
+    const payload: LeadSubmission = {
       kind,
       email,
       name: name || undefined,
