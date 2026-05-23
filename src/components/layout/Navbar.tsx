@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
+import { ThemeSwitch } from "@/components/layout/ThemeSwitch";
 
 /*
  * LOGIN + START SETUP BUTTON BEHAVIOUR
@@ -195,8 +196,9 @@ export function Navbar() {
             })}
           </div>
 
-          {/* ── Desktop CTAs ──────────────────────────────── */}
+          {/* ── Desktop CTAs & Theme Switch ──────────────── */}
           <div className="hidden md:flex items-center gap-3">
+            <ThemeSwitch />
             <Link
               href={loginHref}
               {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
@@ -204,7 +206,6 @@ export function Navbar() {
             >
               Sign In
             </Link>
-
             <Link
               href={deploymentHref}
               {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
@@ -248,6 +249,7 @@ export function Navbar() {
               className="relative h-full pt-28 pb-8 px-7 flex flex-col"
             >
               <nav className="space-y-1">
+                <div className="mb-4"><ThemeSwitch /></div>
                 {NAV_ITEMS.map((item, idx) => {
                   const isActive = isHome && activeSection === item.id;
 
