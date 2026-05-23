@@ -17,10 +17,10 @@ export function PageHero({ label, title, description }: PageHeroProps) {
         <div className="flex justify-center mb-6">
           <SectionLabel>{label}</SectionLabel>
         </div>
-        <h1 className="font-display text-5xl md:text-6xl font-800 text-text-primary mb-6 leading-tight">
+        <h1 className="heading-section text-text-primary mb-6">
           {title}
         </h1>
-        <p className="text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
+        <p className="text-body text-text-secondary max-w-2xl mx-auto">
           {description}
         </p>
       </div>

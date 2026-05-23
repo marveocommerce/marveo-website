@@ -1,73 +1,71 @@
 import Link from "next/link";
-import { siteConfig } from "@/config/site";
 
 const FOOTER_LINKS = {
   Product: [
-    { label: "Overview", href: "/product" },
-    { label: "Templates", href: "/templates" },
-    { label: "Deployments", href: "/deployments" },
-    { label: "Changelog", href: "/changelog" },
-    { label: "Pricing", href: "/pricing" },
-  ],
-  Solutions: [
-    { label: "Corporate", href: "/solutions/corporate" },
-    { label: "Ecommerce", href: "/solutions/ecommerce" },
-    { label: "Real Estate", href: "/solutions/real-estate" },
-    { label: "Healthcare", href: "/solutions/healthcare" },
-    { label: "Education", href: "/solutions/education" },
-  ],
-  Developers: [
-    { label: "Documentation", href: "/docs" },
-    { label: "API Reference", href: "/docs/api" },
-    { label: "Connector Plugin", href: "/docs/plugin" },
-    { label: "GitHub", href: siteConfig.links.github },
-    { label: "Status", href: "/status" },
+    { label: "Platform Overview", href: "/product" },
+    { label: "Operational Infrastructure", href: "/deployments" },
+    { label: "Connected Workspaces", href: "/docs" },
+    { label: "Integrations", href: "/docs/api" },
   ],
   Company: [
-    { label: "About", href: "/about" },
-    { label: "Blog", href: "/blog" },
-    { label: "Careers", href: "/careers" },
     { label: "Contact", href: "/contact" },
-    { label: "Privacy", href: "/privacy" },
+    { label: "About Marvéo", href: "/about" },
+    { label: "Request Demo", href: "/contact?intent=demo" },
+  ],
+  Resources: [
+    { label: "Help Center", href: "/docs" },
+    { label: "Deployment Guide", href: "/docs/plugin" },
+    { label: "API Reference", href: "/docs/api" },
+    { label: "Release Notes", href: "/changelog" },
+    { label: "System Health", href: "/status" },
+  ],
+  Legal: [
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Use", href: "/terms" },
   ],
 };
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-white/6 bg-bg-secondary/20 pt-16 pb-10">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Top row */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-14">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4 group">
-              <div className="relative w-6 h-6">
-                <div className="absolute inset-0 rounded-md bg-accent/20 border border-accent/30" />
-                <div className="absolute inset-0.5 rounded-[4px] bg-accent/80" />
+    <footer className="relative border-t border-white/6 bg-bg-secondary/35 pt-16 md:pt-18 pb-10 md:pb-12">
+      <div className="container-shell">
+        <div className="mb-10 text-center">
+          <Link href="/" className="inline-flex flex-col items-center group">
+            <div className="flex items-center gap-3">
+              <div className="relative w-8 h-8">
+                <div className="absolute inset-0 rounded-lg border border-accent/28 bg-accent/8 shadow-[0_0_24px_rgba(79,142,247,0.18)]" />
+                <div className="absolute inset-[6px] rounded-[6px] border border-accent/35" />
+                <div className="absolute left-1/2 top-1.5 h-2.5 w-px -translate-x-1/2 bg-accent/50" />
+                <div className="absolute left-1/2 bottom-1.5 h-2.5 w-px -translate-x-1/2 bg-accent/50" />
+                <div className="absolute left-1.5 top-1/2 h-px w-2.5 -translate-y-1/2 bg-accent/50" />
+                <div className="absolute right-1.5 top-1/2 h-px w-2.5 -translate-y-1/2 bg-accent/50" />
+                <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/85" />
               </div>
-              <span className="font-display font-700 text-text-primary">Marvéo</span>
-            </Link>
-            <p className="text-sm text-text-muted leading-relaxed mb-5">
-              The website operating system for modern businesses.
-            </p>
-            <div className="flex items-center gap-1 text-xs font-mono text-text-muted">
-              <div className="w-1.5 h-1.5 rounded-full bg-success" />
-              All systems operational
+              <h2 className="font-display text-[clamp(2rem,6vw,4.8rem)] leading-[0.95] tracking-[-0.045em] font-800 text-text-primary group-hover:text-accent-bright transition-colors">
+                MARVEO
+              </h2>
             </div>
-          </div>
+            <span className="mt-3 text-helper font-mono text-text-muted">getmarveo.com</span>
+          </Link>
+          <p className="text-body text-text-secondary max-w-2xl mx-auto mt-4">
+            Connected infrastructure for modern commerce operations.
+          </p>
+        </div>
 
-          {/* Links */}
+        <div className="h-px bg-gradient-to-r from-transparent via-white/18 to-transparent mb-9 md:mb-10" />
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10 md:gap-y-11 mb-10 md:mb-12">
           {Object.entries(FOOTER_LINKS).map(([group, links]) => (
-            <div key={group}>
-              <div className="text-xs font-mono font-medium text-text-muted uppercase tracking-widest mb-4">
+            <div key={group} className="text-center md:text-left">
+              <div className="text-helper font-mono font-medium text-text-muted uppercase tracking-widest mb-4">
                 {group}
               </div>
               <div className="space-y-2.5">
                 {links.map((link) => (
                   <Link
-                    key={link.href}
+                    key={`${group}-${link.label}-${link.href}`}
                     href={link.href}
-                    className="block text-sm text-text-secondary hover:text-text-primary transition-colors"
+                    className="block text-[15px] text-text-secondary hover:text-text-primary transition-colors duration-200"
                   >
                     {link.label}
                   </Link>
@@ -77,29 +75,24 @@ export function Footer() {
           ))}
         </div>
 
-        {/* Bottom row */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-white/5">
-          <p className="text-xs text-text-muted">
-            &copy; {new Date().getFullYear()} Marvéo. All rights reserved. Built by{" "}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-5 md:pt-6 border-t border-white/5">
+          <div className="text-center sm:text-left">
+            <p className="text-helper text-text-muted">
+              &copy; {new Date().getFullYear()} Marvéo. All rights reserved.
+            </p>
+            <p className="text-helper text-text-muted/80 mt-1">
+              Commerce Operations Infrastructure for Modern Businesses.
+            </p>
+          </div>
+          <div className="flex items-center gap-5 text-helper text-text-muted">
             <a
-              href="https://avariodigitals.com/"
+              href="https://getmarveo.com"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent hover:text-accent-bright transition-colors"
             >
-              Avario Digitals
+              getmarveo.com
             </a>
-          </p>
-          <div className="flex items-center gap-5">
-            {["Privacy", "Terms", "Cookies"].map((item) => (
-              <Link
-                key={item}
-                href={`/${item.toLowerCase()}`}
-                className="text-xs text-text-muted hover:text-text-secondary transition-colors"
-              >
-                {item}
-              </Link>
-            ))}
           </div>
         </div>
       </div>

@@ -2,16 +2,40 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { Globe, Layers, Code2, Network, Cpu, GitBranch } from "lucide-react";
+import { BarChart3, Boxes, Building2, ChartLine, LayoutPanelTop, Zap } from "lucide-react";
 import { SectionLabel } from "@/components/shared/SectionLabel";
 
 const CAPABILITIES = [
-  { icon: Globe, label: "Website Deployment", desc: "From template to live production in minutes, not days." },
-  { icon: GitBranch, label: "Plugin Synchronization", desc: "Connect WordPress sites through secure, token-based connectors." },
-  { icon: Layers, label: "Template Provisioning", desc: "Deploy sector-optimised templates across any client workspace." },
-  { icon: Network, label: "Multi-business Management", desc: "One workspace to orchestrate dozens of client deployments." },
-  { icon: Code2, label: "Headless Support", desc: "Unified management for decoupled WordPress and Next.js architectures." },
-  { icon: Cpu, label: "Deployment Orchestration", desc: "Automated CI/CD, rollbacks, and environment management." },
+  {
+    icon: Boxes,
+    label: "Commerce Operations",
+    desc: "Manage products, orders, pricing, inventory, payments, and fulfillment workflows from a cleaner operating layer.",
+  },
+  {
+    icon: LayoutPanelTop,
+    label: "Content and Website Control",
+    desc: "Update pages, menus, banners, landing pages, SEO content, and media without digging through the WordPress backend.",
+  },
+  {
+    icon: Building2,
+    label: "Customer and Lead Management",
+    desc: "Centralize customer data, enquiries, form submissions, and growth opportunities in one place.",
+  },
+  {
+    icon: BarChart3,
+    label: "Analytics and Performance",
+    desc: "Track store health, content performance, traffic insights, and operational activity from one dashboard.",
+  },
+  {
+    icon: Zap,
+    label: "Headless Ready",
+    desc: "Keep WordPress as your backend while powering a fast Next.js frontend when needed.",
+  },
+  {
+    icon: ChartLine,
+    label: "Multi-Site Management",
+    desc: "Manage multiple brands, storefronts, or client websites from a structured Marvéo workspace.",
+  },
 ];
 
 export function ProductPositioning() {
@@ -19,7 +43,7 @@ export function ProductPositioning() {
 
   return (
     <section ref={ref} className="section-spacing relative">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="container-shell">
         <div className="text-center mb-16">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -27,26 +51,27 @@ export function ProductPositioning() {
             transition={{ duration: 0.5 }}
             className="flex justify-center mb-5"
           >
-            <SectionLabel>Core Platform</SectionLabel>
+            <SectionLabel>What Marvéo Does</SectionLabel>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 16 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-display text-4xl md:text-5xl font-700 text-gradient-subtle mb-5"
+            className="heading-section text-text-primary mb-5"
           >
-            Everything you need to
-            <br />
-            run modern web infrastructure.
+            One Workspace for Commerce,
+            <br className="hidden md:block" />
+            <span className="text-gradient">Content, and Growth</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="max-w-xl mx-auto text-text-secondary"
+            className="max-w-3xl mx-auto text-body text-text-secondary"
           >
-            Marvéo replaces the fragmented stack of tools businesses use to
-            manage websites. One OS. All operations.
+            Marvéo is positioned around operational outcomes. Teams get cleaner
+            control over commerce execution, content velocity, and growth
+            decisions while WordPress and WooCommerce continue powering the core engine.
           </motion.p>
         </div>
 
@@ -64,8 +89,10 @@ export function ProductPositioning() {
                 <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/15 flex items-center justify-center mb-4 group-hover:bg-accent/15 transition-colors">
                   <Icon className="w-5 h-5 text-accent" />
                 </div>
-                <h3 className="font-display font-600 text-text-primary mb-2">{cap.label}</h3>
-                <p className="text-sm text-text-secondary leading-relaxed">{cap.desc}</p>
+                <h3 className="font-display font-700 text-lg md:text-xl leading-snug text-text-primary mb-2">
+                  {cap.label}
+                </h3>
+                <p className="text-base text-text-secondary leading-relaxed">{cap.desc}</p>
               </motion.div>
             );
           })}

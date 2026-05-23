@@ -1,224 +1,252 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Play, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { GlowOrb } from "@/components/shared/GlowOrb";
 import { Badge } from "@/components/shared/Badge";
 
-const TRUST_ITEMS = [
-  "WordPress sync",
-  "Headless ready",
-  "Multi-site ops",
-  "Template provisioning",
+const OPERATIONAL_SIGNALS = [
+  { label: "Active Workspaces", value: "96" },
+  { label: "Operational Health", value: "98.7%" },
+  { label: "Active Workflows", value: "312" },
+];
+
+const ACTIVITY_STREAM = [
+  "Client request triaged to Team Operations",
+  "Infrastructure sync completed across 4 channels",
+  "Revenue operation reconciliation finished",
+  "Workflow automation approved for deployment",
+  "Unified inbox routed 12 priority conversations",
+  "Deployment status transitioned to healthy",
+];
+
+const CHANNELS = [
+  "WhatsApp",
+  "Instagram",
+  "TikTok",
+  "Telegram",
+  "Email",
+  "Web Chat",
 ];
 
 export function Hero() {
+  const [activeEvent, setActiveEvent] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveEvent((prev) => (prev + 1) % ACTIVITY_STREAM.length);
+    }, 2200);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-24 pb-16">
-      {/* Background */}
+    <section className="relative overflow-hidden pt-28 pb-20 md:pt-36 md:pb-24">
       <div className="absolute inset-0 grid-bg opacity-100" />
       <div className="absolute inset-0 bg-radial-glow" />
-      <GlowOrb className="-top-40 left-1/2 -translate-x-1/2" size="xl" />
-      <GlowOrb className="top-1/3 -right-32" size="md" color="rgba(52,211,153,0.06)" />
+      <GlowOrb className="-top-40 left-1/2 -translate-x-1/2" size="lg" />
+      <GlowOrb className="top-20 -right-28" size="md" color="rgba(79,142,247,0.12)" />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-        {/* Announcement badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0 }}
-          className="flex justify-center mb-8"
-        >
-          <Badge variant="accent">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-            Marvéo v1 — Now in Early Access
-            <ArrowRight className="w-3 h-3" />
-          </Badge>
-        </motion.div>
+      <div className="relative z-10 container-shell">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="mb-6"
+            >
+              <Badge variant="accent">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                Marvéo Operational Ecosystem
+                <ArrowRight className="w-3 h-3" />
+              </Badge>
+            </motion.div>
 
-        {/* Main headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-          className="font-display text-5xl md:text-7xl lg:text-8xl font-800 leading-[0.95] tracking-tight mb-6"
-        >
-          <span className="text-gradient">Deploy. Manage.</span>
-          <br />
-          <span className="text-text-primary">Scale. Control.</span>
-        </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+              className="heading-hero mb-6"
+            >
+              One Workspace.
+              <br />
+              <span className="text-gradient">Every Operation.</span>
+            </motion.h1>
 
-        {/* Sub headline */}
-        <motion.p
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-          className="max-w-2xl mx-auto text-lg md:text-xl text-text-secondary leading-relaxed mb-10"
-        >
-          Marvéo is the website operating system for modern businesses.
-          Connect any stack — WordPress, Headless, Next.js — and manage
-          everything from one intelligent deployment workspace.
-        </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+              className="text-body text-text-secondary mb-8 max-w-2xl"
+            >
+              Marvéo centralizes operational workflows, communication infrastructure,
+              revenue operations, team coordination, and deployment systems into one
+              connected workspace for modern businesses.
+            </motion.p>
 
-        {/* Trust items */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.25 }}
-          className="flex flex-wrap justify-center gap-3 mb-10"
-        >
-          {TRUST_ITEMS.map((item) => (
-            <span
-              key={item}
-              className="flex items-center gap-1.5 text-xs text-text-muted font-mono"
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
+              className="flex flex-col sm:flex-row flex-wrap gap-3 mb-6"
+            >
+              <Link
+                href="/contact?intent=guided-onboarding"
+                className="btn-base group bg-accent hover:bg-accent-bright text-white shadow-[0_0_28px_rgba(79,142,247,0.35)]"
+              >
+                Book a Demo
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+              <Link
+                href="/product"
+                className="btn-base bg-white/5 hover:bg-white/8 border border-white/12 hover:border-white/20 text-text-primary"
+              >
+                Explore Platform
+              </Link>
+            </motion.div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.35 }}
+              className="flex items-center gap-2 text-helper text-text-muted font-mono"
             >
               <CheckCircle2 className="w-3.5 h-3.5 text-success" />
-              {item}
-            </span>
-          ))}
-        </motion.div>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20"
-        >
-          <Link
-            href="/setup/activate"
-            className="group flex items-center gap-2 px-7 py-3.5 bg-accent hover:bg-accent-bright text-white font-semibold text-sm rounded-xl transition-all duration-200 shadow-[0_0_30px_rgba(79,142,247,0.35)] hover:shadow-[0_0_40px_rgba(79,142,247,0.5)]"
-          >
-            Start Deployment
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-          </Link>
-          <Link
-            href="/templates"
-            className="flex items-center gap-2 px-7 py-3.5 bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 text-text-primary font-semibold text-sm rounded-xl transition-all duration-200"
-          >
-            <Play className="w-3.5 h-3.5" />
-            Explore Templates
-          </Link>
-        </motion.div>
-
-        {/* Dashboard Mockup */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
-          className="relative"
-        >
-          {/* Fade out bottom */}
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg-primary to-transparent z-10" />
-          {/* Glow behind mockup */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-accent/20 via-transparent to-accent/10 rounded-2xl blur-lg opacity-50" />
-
-          <div className="relative card-surface rounded-2xl overflow-hidden border border-white/8 shadow-[0_40px_100px_rgba(0,0,0,0.8)]">
-            {/* Browser chrome bar */}
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/6 bg-bg-secondary/60">
-              <div className="flex gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-error/60" />
-                <div className="w-3 h-3 rounded-full bg-warning/60" />
-                <div className="w-3 h-3 rounded-full bg-success/60" />
-              </div>
-              <div className="flex-1 flex justify-center">
-                <div className="px-4 py-1 bg-bg-card rounded-md border border-white/6 text-xs text-text-muted font-mono">
-                  marveo.co/dashboard
-                </div>
-              </div>
-            </div>
-
-            {/* Dashboard content */}
-            <div className="grid grid-cols-4 min-h-[380px]">
-              {/* Sidebar */}
-              <div className="col-span-1 border-r border-white/5 bg-bg-secondary/40 p-4 space-y-1 hidden md:block">
-                {["Overview", "Deployments", "Templates", "Workspaces", "Sync", "Settings"].map(
-                  (item, i) => (
-                    <div
-                      key={item}
-                      className={`px-3 py-2 rounded-lg text-xs font-medium ${
-                        i === 0
-                          ? "bg-accent/15 text-accent border border-accent/20"
-                          : "text-text-muted"
-                      }`}
-                    >
-                      {item}
-                    </div>
-                  )
-                )}
-              </div>
-
-              {/* Main panel */}
-              <div className="col-span-4 md:col-span-3 p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-sm font-semibold text-text-primary mb-1">
-                      Workspace Overview
-                    </div>
-                    <div className="text-xs text-text-muted">
-                      3 active deployments · Last sync 2m ago
-                    </div>
-                  </div>
-                  <div className="px-3 py-1.5 bg-success/10 border border-success/20 rounded-lg text-xs text-success font-mono">
-                    All systems operational
-                  </div>
-                </div>
-
-                {/* Stat cards */}
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { label: "Deployments", value: "12", trend: "+3 today" },
-                    { label: "Sites Live", value: "8", trend: "100% uptime" },
-                    { label: "Templates", value: "24", trend: "6 sectors" },
-                  ].map((stat) => (
-                    <div
-                      key={stat.label}
-                      className="p-3 rounded-xl bg-bg-card border border-white/5"
-                    >
-                      <div className="text-lg font-display font-700 text-text-primary">
-                        {stat.value}
-                      </div>
-                      <div className="text-xs text-text-muted">{stat.label}</div>
-                      <div className="text-xs text-success mt-1">{stat.trend}</div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Activity rows */}
-                <div className="space-y-2">
-                  {[
-                    { name: "Nexus Corporate", status: "live", time: "2m ago", env: "production" },
-                    { name: "Cartify Ecommerce", status: "deploying", time: "8m ago", env: "staging" },
-                    { name: "EstateView Pro", status: "live", time: "1h ago", env: "production" },
-                  ].map((row) => (
-                    <div
-                      key={row.name}
-                      className="flex items-center justify-between p-3 rounded-xl bg-bg-card/60 border border-white/4"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-2 h-2 rounded-full ${
-                            row.status === "live"
-                              ? "bg-success"
-                              : "bg-warning animate-pulse"
-                          }`}
-                        />
-                        <span className="text-xs font-medium text-text-secondary">
-                          {row.name}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs font-mono text-text-muted">{row.env}</span>
-                        <span className="text-xs text-text-muted">{row.time}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+              Built for commerce teams, agencies, clinics, consultants, and service businesses.
+            </motion.p>
           </div>
-        </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.25 }}
+            className="relative"
+          >
+            <div className="absolute -inset-3 rounded-3xl bg-gradient-to-r from-accent/18 via-transparent to-accent/8 blur-2xl" />
+
+            <motion.div
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-6 right-6 z-20 rounded-2xl border border-white/12 bg-bg-card/70 backdrop-blur-md px-4 py-3 shadow-[0_12px_32px_-20px_rgba(0,0,0,0.8)]"
+            >
+              <p className="text-[11px] font-mono text-text-muted mb-1">Connected Channels</p>
+              <div className="flex flex-wrap gap-1.5 max-w-[220px]">
+                {CHANNELS.slice(0, 4).map((channel) => (
+                  <span
+                    key={channel}
+                    className="inline-flex items-center gap-1 rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-[10px] text-text-secondary"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                    {channel}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [0, 6, 0] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+              className="absolute -bottom-7 left-6 z-20 rounded-2xl border border-white/12 bg-bg-card/70 backdrop-blur-md px-4 py-3 shadow-[0_12px_32px_-20px_rgba(0,0,0,0.8)]"
+            >
+              <p className="text-[11px] font-mono text-text-muted mb-1">Deployment Status</p>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                <span className="text-xs text-text-primary">Rolling out workflow updates</span>
+              </div>
+            </motion.div>
+
+            <div className="relative card-surface rounded-3xl border border-white/10 overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,0.7)]">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-white/8 bg-bg-secondary/60">
+                <div>
+                  <p className="text-xs font-mono text-text-muted">Marvéo Mission Control</p>
+                  <p className="text-sm font-semibold text-text-primary">Connected Operational Infrastructure</p>
+                </div>
+                <div className="flex items-center gap-2 text-xs font-mono px-2.5 py-1 rounded-lg bg-success/10 border border-success/20 text-success">
+                  <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                  Live
+                </div>
+              </div>
+
+              <div className="p-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {OPERATIONAL_SIGNALS.map((stat) => (
+                  <motion.div
+                    key={stat.label}
+                    animate={{ opacity: [0.8, 1, 0.8] }}
+                    transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+                    className="p-3 rounded-xl bg-bg-card border border-white/6"
+                  >
+                    <p className="text-[11px] text-text-muted font-mono mb-1">{stat.label}</p>
+                    <p className="text-base font-display font-700 text-text-primary">{stat.value}</p>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="px-5 pb-5 space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-3 rounded-xl border border-white/8 bg-bg-card/75">
+                    <p className="text-[11px] font-mono text-text-muted mb-2">Revenue Operations</p>
+                    <div className="h-1.5 rounded-full bg-white/8 overflow-hidden">
+                      <motion.div
+                        initial={{ width: "62%" }}
+                        animate={{ width: ["62%", "78%", "70%"] }}
+                        transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
+                        className="h-full bg-gradient-to-r from-accent/80 to-accent-bright"
+                      />
+                    </div>
+                    <p className="text-[11px] text-text-muted mt-2">Settlements and approvals synchronizing</p>
+                  </div>
+
+                  <div className="p-3 rounded-xl border border-white/8 bg-bg-card/75">
+                    <p className="text-[11px] font-mono text-text-muted mb-2">Unified Inbox</p>
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-[11px] text-text-secondary">
+                        <span>Client Requests</span>
+                        <span className="text-text-primary">14 active</span>
+                      </div>
+                      <div className="flex justify-between text-[11px] text-text-secondary">
+                        <span>Pending Approvals</span>
+                        <span className="text-warning">3 pending</span>
+                      </div>
+                      <div className="flex justify-between text-[11px] text-text-secondary">
+                        <span>Team Activity</span>
+                        <span className="text-success">Operational</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl border border-accent/20 bg-accent/8">
+                  <p className="text-[11px] font-mono text-text-muted mb-2">Live Activity Stream</p>
+                  <div className="space-y-1.5">
+                    {ACTIVITY_STREAM.slice(0, 4).map((event, index) => {
+                      const isActive = index === activeEvent % 4;
+                      return (
+                        <div
+                          key={event}
+                          className={`flex items-center justify-between rounded-lg px-2.5 py-1.5 border transition-all duration-300 ${
+                            isActive
+                              ? "border-accent/35 bg-accent/10"
+                              : "border-white/6 bg-white/[0.02]"
+                          }`}
+                        >
+                          <span className="text-[11px] text-text-secondary">{event}</span>
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              isActive ? "bg-success animate-pulse" : "bg-white/30"
+                            }`}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

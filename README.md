@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Marveo Website
 
-## Getting Started
+Operational marketing site for Marveo, built with Next.js App Router.
 
-First, run the development server:
+## Business-Ready Stack Included
+
+- Real lead submission API endpoint (`/api/leads`)
+- Contact form wired to backend submission
+- Waiting list popup wired to backend submission
+- GA4 + Meta Pixel client-side integration (env-driven)
+- SEO baseline:
+	- global metadata
+	- Open Graph image
+	- JSON-LD structured data
+	- dynamic sitemap
+	- robots.txt
+	- manifest
+
+## Local Development
+
+1. Install dependencies.
+
+```bash
+npm install
+```
+
+2. Copy environment template and set values.
+
+```bash
+cp .env.example .env.local
+```
+
+3. Start dev server.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Lead Submission Delivery
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Submissions are accepted by `src/app/api/leads/route.ts`.
 
-## Learn More
+Supported delivery channels:
 
-To learn more about Next.js, take a look at the following resources:
+1. Webhook (`LEADS_WEBHOOK_URL`, optional `WAITLIST_WEBHOOK_URL`)
+2. Resend email alerts (`RESEND_API_KEY`, `LEADS_ALERT_EMAIL`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+If no provider is configured, submissions are still captured in server logs to avoid silent frontend success without backend processing.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Analytics and Pixel
 
-## Deploy on Vercel
+Configured in `src/components/analytics/MarketingScripts.tsx`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID` enables GA4 pageview + events.
+- `NEXT_PUBLIC_META_PIXEL_ID` enables Meta Pixel pageview + lead tracking.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Client conversion events are emitted from:
+
+- `src/app/contact/page.tsx`
+- `src/components/shared/WaitingListPopup.tsx`
+
+## SEO Files
+
+- `src/app/layout.tsx` (metadata + JSON-LD)
+- `src/app/sitemap.ts`
+- `src/app/robots.ts`
+- `src/app/manifest.ts`
+
+## Validation
+
+```bash
+npm run lint
+npm run build
+```

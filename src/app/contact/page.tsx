@@ -7,21 +7,71 @@ import { Footer } from "@/components/layout/Footer";
 import { PageHero } from "@/components/shared/PageHero";
 import { GlowOrb } from "@/components/shared/GlowOrb";
 import { CONTACT_OPTIONS } from "@/constants";
+import { trackEvent, trackLead } from "@/lib/analytics";
 
 const ICONS: Record<string, React.ElementType> = { Calendar, MessageSquare, Mail };
 
 export default function ContactPage() {
   const [sent, setSent] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", company: "", type: "demo", message: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [form, setForm] = useState({ name: "", email: "", company: "", type: "strategy", message: "" });
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    setError("");
+    setSubmitting(true);
+
+    try {
+      const intent =
+        typeof window !== "undefined"
+          ? new URLSearchParams(window.location.search).get("intent") || form.type
+          : form.type;
+
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          kind: "contact",
+          name: form.name,
+          email: form.email,
+          company: form.company,
+          inquiryType: form.type,
+          message: form.message,
+          intent,
+          source: "contact-page",
+          pagePath: "/contact",
+        }),
+      });
+
+      const result = (await response.json()) as { ok?: boolean; error?: string };
+
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || "We could not submit your message.");
+      }
+
+      trackLead("contact", { inquiry_type: form.type, intent });
+      trackEvent("contact_form_submitted", { inquiry_type: form.type, intent });
+      setSent(true);
+    } catch (submitError) {
+      const message = submitError instanceof Error ? submitError.message : "Submission failed. Please try again.";
+      setError(message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <>
       <Navbar />
       <main>
         <PageHero
-          label="Contact"
-          title={<>Let&apos;s get your<br /><span className="text-gradient">website deployed.</span></>}
-          description="Book a product demo, ask a question, or get a consultation. Our team responds within 24 hours."
+          label="Start Operating Smarter"
+          title={<>Let&apos;s Modernize Your<br /><span className="text-gradient">Commerce Operations.</span></>}
+          description="Speak with the Marvéo team about operational infrastructure, deployment strategy, connected workflows, integrations, and scalable commerce systems."
         />
         <section className="max-w-6xl mx-auto px-6 pb-24">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -54,10 +104,10 @@ export default function ContactPage() {
                       <Send className="w-6 h-6 text-success" />
                     </div>
                     <h3 className="font-display text-xl font-700 text-text-primary mb-2">Message sent!</h3>
-                    <p className="text-text-secondary text-sm">We&apos;ll get back to you within 24 hours.</p>
+                    <p className="text-text-secondary text-sm">Our team will follow up within one business day.</p>
                   </div>
                 ) : (
-                  <div className="space-y-5">
+                  <form className="space-y-5" onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       {[
                         { key: "name",    label: "Full Name",     type: "text",  placeholder: "Your name",       span: false },
@@ -69,9 +119,10 @@ export default function ContactPage() {
                             {field.label}
                           </label>
                           <input type={field.type} placeholder={field.placeholder}
+                            required={field.key === "name" || field.key === "email"}
                             value={form[field.key as keyof typeof form]}
                             onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-                            className="w-full px-4 py-3 bg-bg-card border border-white/8 rounded-xl text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/40 font-body transition-colors"
+                            className="w-full px-4 py-3 bg-bg-card/90 border border-white/10 rounded-xl text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/45 focus:bg-bg-card focus:shadow-[0_0_0_3px_rgba(79,142,247,0.15)] font-body transition-all duration-200"
                           />
                         </div>
                       ))}
@@ -79,31 +130,38 @@ export default function ContactPage() {
                     <div>
                       <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-2">I want to</label>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        {["demo", "question", "pricing", "partnership"].map((t) => (
-                          <button key={t} onClick={() => setForm({ ...form, type: t })}
-                            className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all capitalize ${
+                        {["strategy", "consultation", "pricing", "partnership"].map((t) => (
+                          <button key={t} type="button" onClick={() => setForm({ ...form, type: t })}
+                            className={`px-3 py-2.5 rounded-xl text-xs font-medium border transition-all duration-200 ${
                               form.type === t
-                                ? "bg-accent/15 text-accent border-accent/25"
-                                : "bg-white/3 text-text-muted border-white/7 hover:text-text-secondary"
+                                ? "bg-accent/15 text-accent border-accent/25 shadow-[0_8px_24px_-16px_rgba(79,142,247,0.55)]"
+                                : "bg-white/3 text-text-muted border-white/7 hover:text-text-secondary hover:border-white/15"
                             }`}>
-                            {t === "demo" ? "Book a demo" : t === "question" ? "Ask something" : t}
+                            {t === "strategy"
+                              ? "Book Strategy Session"
+                              : t === "consultation"
+                              ? "Platform Consultation"
+                              : t === "pricing"
+                              ? "Pricing & Plans"
+                              : "Agency Partnership"}
                           </button>
                         ))}
                       </div>
                     </div>
                     <div>
                       <label className="block text-xs font-mono text-text-muted uppercase tracking-wider mb-2">Message</label>
-                      <textarea rows={4} placeholder="Tell us about your project..."
+                      <textarea rows={4} placeholder="Tell us about your operational goals, infrastructure, or commerce requirements..."
                         value={form.message}
                         onChange={(e) => setForm({ ...form, message: e.target.value })}
-                        className="w-full px-4 py-3 bg-bg-card border border-white/8 rounded-xl text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/40 font-body resize-none transition-colors"
+                        className="w-full px-4 py-3 bg-bg-card/90 border border-white/10 rounded-xl text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/45 focus:bg-bg-card focus:shadow-[0_0_0_3px_rgba(79,142,247,0.15)] font-body resize-none transition-all duration-200"
                       />
                     </div>
-                    <button onClick={() => setSent(true)}
+                    {error ? <p className="text-sm text-warning">{error}</p> : null}
+                    <button type="submit" disabled={submitting}
                       className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-accent hover:bg-accent-bright text-white font-semibold text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(79,142,247,0.3)]">
-                      <Send className="w-4 h-4" /> Send Message
+                      <Send className="w-4 h-4" /> {submitting ? "Sending..." : "Send Message"}
                     </button>
-                  </div>
+                  </form>
                 )}
               </div>
             </div>

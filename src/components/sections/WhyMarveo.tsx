@@ -2,11 +2,25 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { Shield, Zap, RefreshCw, Layers, BarChart2, Globe } from "lucide-react";
+import { CheckCircle2, XCircle } from "lucide-react";
 import { SectionLabel } from "@/components/shared/SectionLabel";
-import { WHY_FEATURES } from "@/constants";
 
-const ICONS: Record<string, React.ElementType> = { Shield, Zap, RefreshCw, Layers, BarChart2, Globe };
+const TRADITIONAL_OPERATIONS = [
+  "Designed primarily for content management",
+  "Operational workflows become fragmented over time",
+  "Limited visibility across business systems",
+  "Difficult to scale across teams and environments",
+  "Requires multiple disconnected tools",
+];
+
+const MARVEO = [
+  "Structured operational workspace",
+  "Centralized commerce visibility",
+  "Connected business workflows",
+  "Team-ready operational controls",
+  "Deployment and infrastructure aware",
+  "Works alongside existing commerce systems",
+];
 
 export function WhyMarveo() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.05 });
@@ -15,55 +29,76 @@ export function WhyMarveo() {
     <section ref={ref} className="section-spacing relative">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="container-shell">
         <div className="text-center mb-16">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             className="flex justify-center mb-5"
           >
-            <SectionLabel>Why Marvéo</SectionLabel>
+            <SectionLabel>Built for Modern Operations</SectionLabel>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 16 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.1 }}
-            className="font-display text-4xl md:text-5xl font-700 text-text-primary mb-5"
+            className="heading-section text-text-primary mb-5"
           >
-            Built for scale.
-            <br />
-            <span className="text-gradient">Designed for operators.</span>
+            Built for Operations Beyond
+            <br className="hidden md:block" />
+            <span className="text-gradient">Traditional Admin Panels</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.15 }}
-            className="max-w-xl mx-auto text-text-secondary"
+            className="max-w-3xl mx-auto text-body text-text-secondary"
           >
-            Everything in Marvéo is designed with one principle: operational
-            simplicity at enterprise scale.
+            Marvéo adds a structured operational layer above existing commerce
+            and content systems - giving businesses clearer workflows,
+            visibility, deployment control, and scalable operational
+            infrastructure.
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {WHY_FEATURES.map((feat, i) => {
-            const Icon = ICONS[feat.icon];
-            return (
-              <motion.div
-                key={feat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.1 + i * 0.07 }}
-                className="card-surface card-surface-hover p-6 rounded-2xl group"
-              >
-                <div className="w-11 h-11 rounded-xl bg-accent/8 border border-accent/12 flex items-center justify-center mb-5 group-hover:bg-accent/12 transition-colors">
-                  {Icon && <Icon className="w-5 h-5 text-accent" />}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.45, delay: 0.05 }}
+            className="group card-surface rounded-2xl p-6 md:p-7 transition-all duration-300 hover:-translate-y-1 hover:border-white/15"
+          >
+            <h3 className="font-display font-700 text-lg md:text-xl leading-snug text-text-primary mb-5">
+              Traditional Website Operations
+            </h3>
+            <div className="space-y-3.5">
+              {TRADITIONAL_OPERATIONS.map((item) => (
+                <div key={item} className="flex items-start gap-2.5 text-base text-text-secondary">
+                  <XCircle className="w-4 h-4 text-warning mt-0.5" />
+                  <span>{item}</span>
                 </div>
-                <h3 className="font-display font-700 text-text-primary mb-2">{feat.label}</h3>
-                <p className="text-sm text-text-secondary leading-relaxed">{feat.description}</p>
-              </motion.div>
-            );
-          })}
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.45, delay: 0.12 }}
+            className="group card-surface border-glow rounded-2xl p-6 md:p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_55px_-28px_rgba(14,165,233,0.5)]"
+          >
+            <h3 className="font-display font-700 text-lg md:text-xl leading-snug text-text-primary mb-5">
+              Marvéo
+            </h3>
+            <div className="space-y-3.5">
+              {MARVEO.map((item) => (
+                <div key={item} className="flex items-start gap-2.5 text-base text-text-secondary">
+                  <CheckCircle2 className="w-4 h-4 text-success mt-0.5" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>

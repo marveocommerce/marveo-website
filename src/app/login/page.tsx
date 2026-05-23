@@ -20,7 +20,7 @@ export default function LoginPage() {
               The Marvéo dashboard lives on our app platform. Click below to sign in or create your account.
             </p>
             <Link
-              href="https://app.marveo.co/login"
+              href="https://app.getmarveo.com/login"
               className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-accent hover:bg-accent-bright text-white font-semibold text-sm rounded-xl transition-all mb-4 shadow-[0_0_20px_rgba(79,142,247,0.3)]"
             >
               <ExternalLink className="w-4 h-4" />

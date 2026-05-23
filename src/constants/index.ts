@@ -334,42 +334,72 @@ export const PRICING_PLANS = [
 ];
 
 
-// ── Changelog Entries ────────────────────────────────────────
-// Add new releases at the top of this array.
-// Future: replace with GET /api/changelog from the platform API.
+// ── Platform Updates ─────────────────────────────────────────
+// Add new operational releases at the top of this array.
 export const CHANGELOG_ENTRIES = [
   {
-    version: "v1.0.0",
-    date: "May 2026",
-    tag: "Launch",
-    changes: [
-      "Initial Marvéo platform launch",
-      "WordPress Connector Plugin v1.0",
-      "Corporate, Ecommerce, Real Estate templates",
-      "Vercel deployment integration",
-      "Token-based authentication system",
+    category: "Operational Infrastructure",
+    title: "Platform Version Launch",
+    status: "Released",
+    date: "May 22, 2026",
+    summary:
+      "Marvéo launched its first platform version with a connected operational foundation for teams and infrastructure workflows.",
+    highlights: [
+      "Connected operational workspace foundation",
+      "Core deployment coordination controls",
+      "Initial operational visibility layer",
+      "Launch-grade reliability baseline",
     ],
+    impact:
+      "Establishes a stable operational core for teams launching connected business systems.",
   },
   {
-    version: "v0.9.0",
-    date: "Apr 2026",
-    tag: "Beta",
-    changes: [
-      "Private beta with select agencies",
-      "Headless WordPress support added",
-      "Template marketplace architecture",
-      "GitHub sync integration",
+    category: "Commerce Operations",
+    title: "Launch Readiness Infrastructure Update",
+    status: "Infrastructure Update",
+    date: "May 17, 2026",
+    summary:
+      "Stabilized core operational workflows and monitoring signals ahead of the launch version release.",
+    highlights: [
+      "Improved inventory and order workflow reliability",
+      "Stronger deployment signal consistency",
+      "Better exception handling paths",
+      "Refined operational workflow continuity",
     ],
+    impact:
+      "Improves launch confidence through more reliable operational execution.",
   },
   {
-    version: "v0.5.0",
-    date: "Mar 2026",
-    tag: "Alpha",
-    changes: [
-      "Core Engine scaffolded",
-      "Initial plugin connection flow",
-      "Dashboard UI foundation",
+    category: "Workspace Operations",
+    title: "Workspace Coordination Improvement",
+    status: "Workspace Improvement",
+    date: "May 11, 2026",
+    summary:
+      "Improved workspace orchestration for teams operating across multiple client and operational contexts.",
+    highlights: [
+      "Clearer workspace switching and context control",
+      "Improved role-based operational alignment",
+      "Stronger workflow ownership visibility",
+      "Smoother multi-team operational navigation",
     ],
+    impact:
+      "Reduces coordination friction across teams preparing for launch operations.",
+  },
+  {
+    category: "Communication Infrastructure",
+    title: "Communication Infrastructure Rollout",
+    status: "Rolling Out",
+    date: "May 06, 2026",
+    summary:
+      "Activated connected communication workflows across client-facing and operational team channels.",
+    highlights: [
+      "Multi-channel operational routing",
+      "Unified communication activity context",
+      "Improved team handoff visibility",
+      "Cross-workspace communication continuity",
+    ],
+    impact:
+      "Strengthens communication continuity across the initial launch operations layer.",
   },
 ];
 
@@ -404,18 +434,18 @@ export const STATUS_SERVICES = [
 export const ABOUT_VALUES = [
   {
     icon: "Target",
-    label: "Simplicity first",
-    desc: "Every feature exists to remove complexity, not add it. Business owners should not need a developer to update their website.",
+    label: "Operational Simplicity",
+    desc: "Operational infrastructure should reduce friction, not increase dependency.",
   },
   {
     icon: "Zap",
-    label: "Speed is a feature",
-    desc: "Fast deployment, fast performance, fast iteration. Speed compounds into competitive advantage.",
+    label: "Speed as Infrastructure",
+    desc: "Operational speed compounds into business advantage.",
   },
   {
     icon: "Globe",
     label: "Built for scale",
-    desc: "Whether you manage one site or one thousand, the architecture should hold without fragmentation.",
+    desc: "Operational systems should remain connected as businesses expand.",
   },
 ];
 
@@ -499,22 +529,22 @@ export const PRODUCT_LAYERS = [
 export const DOC_SECTIONS = [
   {
     icon: "BookOpen",
-    title: "Getting Started",
-    desc: "Set up your first workspace, connect your site, and deploy in under 10 minutes.",
+    title: "Operational Onboarding",
+    desc: "Set up operational workspaces, connect infrastructure, and centralize commerce operations through one platform environment.",
     href: "/docs/getting-started",
     label: "New to Marvéo",
   },
   {
     icon: "PlugZap",
-    title: "Connector Plugin",
-    desc: "Install and configure the WordPress connector plugin. Token setup, GitHub sync, and validation.",
+    title: "Infrastructure Connector",
+    desc: "Connect existing commerce environments, operational systems, and infrastructure workflows into Marvéo.",
     href: "/docs/plugin",
-    label: "WordPress users",
+    label: "Infrastructure",
   },
   {
     icon: "Code2",
-    title: "API Reference",
-    desc: "Full REST API documentation. Authentication, endpoints, webhooks, and code examples.",
+    title: "Developer Platform",
+    desc: "Access APIs, integrations, operational tooling, and developer resources for extending the Marvéo ecosystem.",
     href: "/docs/api",
     label: "Developers",
   },
@@ -526,20 +556,20 @@ export const DOC_SECTIONS = [
 export const CONTACT_OPTIONS = [
   {
     icon: "Calendar",
-    label: "Book a Demo",
-    desc: "30-minute walkthrough of the Marvéo platform tailored to your use case.",
-    action: "Schedule →",
+    label: "Book Strategy Session",
+    desc: "Discuss operational goals, infrastructure planning, and platform adoption with the Marvéo team.",
+    action: "Schedule Session →",
   },
   {
     icon: "MessageSquare",
-    label: "General Enquiry",
-    desc: "Ask us anything about pricing, integrations, or deployment.",
-    action: "Chat →",
+    label: "Platform & Integration Questions",
+    desc: "Get answers about integrations, operational workflows, deployments, and infrastructure compatibility.",
+    action: "Ask a Question →",
   },
   {
     icon: "Mail",
-    label: "Email Us",
-    desc: "hello@marveo.co — we reply within one business day.",
-    action: "Email →",
+    label: "Enterprise & Partnership",
+    desc: "Explore agency partnerships, enterprise onboarding, and multi-workspace operational environments.",
+    action: "Contact Team →",
   },
 ];

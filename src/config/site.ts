@@ -3,8 +3,9 @@ export const siteConfig = {
   tagline: "The Website Operating System",
   description:
     "Deploy, manage, and scale modern websites without heavy technical complexity. Marvéo is the commerce OS for businesses that want more.",
-  url: "https://marveo.co",
-  ogImage: "/og.png",
+  url: "https://getmarveo.com",
+  ogImage: "/og-image.svg",
+  logo: "/logo-mark.svg",
 
   /*
    * appUrl — the external Marvéo platform application.
@@ -17,7 +18,7 @@ export const siteConfig = {
    *
    * Used by: src/components/layout/Navbar.tsx
    */
-  appUrl: "",
+  appUrl: "https://app.getmarveo.com",
 
   links: {
     github:  "https://github.com/marveocommerce",
@@ -32,10 +33,11 @@ export const siteConfig = {
    * The Navbar component reads this array automatically.
    */
   nav: [
-    { label: "Product",   href: "/product"            },
-    { label: "Templates", href: "/templates"           },
-    { label: "Solutions", href: "/solutions/corporate" },
-    { label: "Docs",      href: "/docs"                },
-    { label: "Pricing",   href: "/pricing"             },
+    { label: "Product", href: "/product" },
+    { label: "How It Works", href: "/#how-it-works" },
+    { label: "Templates", href: "/templates" },
+    { label: "Security", href: "/#security" },
+    { label: "Pricing", href: "/pricing" },
+    { label: "Book Demo", href: "/contact?intent=guided-onboarding" },
   ],
 };

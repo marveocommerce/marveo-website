@@ -2,17 +2,31 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { Shield, GitBranch, Key, RefreshCw, Zap, Lock } from "lucide-react";
+import { CheckCircle2, Globe, KeyRound, Link2, RefreshCw } from "lucide-react";
 import { SectionLabel } from "@/components/shared/SectionLabel";
 import { GlowOrb } from "@/components/shared/GlowOrb";
 
 const SYNC_FEATURES = [
-  { icon: Key, label: "Token-based Auth", desc: "One-time validation token. No usernames, no passwords handed over." },
-  { icon: GitBranch, label: "GitHub Sync", desc: "Connector plugin auto-updates on every push to your GitHub repo." },
-  { icon: RefreshCw, label: "Live Synchronisation", desc: "Changes in WordPress reflect in Marvéo in real-time." },
-  { icon: Lock, label: "Passwordless Direction", desc: "Roadmapping to full cPanel passwordless login. Security-first architecture." },
-  { icon: Shield, label: "Enterprise Auth", desc: "Token rotation, expiry controls, and access management built-in." },
-  { icon: Zap, label: "Instant Activation", desc: "One click on the activation link and your site is live in Marvéo." },
+  {
+    icon: KeyRound,
+    label: "Infrastructure Verification",
+    desc: "Securely connect and validate existing business infrastructure inside Marvéo.",
+  },
+  {
+    icon: Link2,
+    label: "Connected Commerce Operations",
+    desc: "Keep products, orders, content, and operational workflows synchronized across systems.",
+  },
+  {
+    icon: RefreshCw,
+    label: "Operational Sync",
+    desc: "Maintain structured synchronization across connected business environments.",
+  },
+  {
+    icon: Globe,
+    label: "Existing Infrastructure Compatible",
+    desc: "Works with existing domains, commerce platforms, APIs, and frontend architectures.",
+  },
 ];
 
 export function WordPressSync() {
@@ -23,7 +37,7 @@ export function WordPressSync() {
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       <GlowOrb className="top-1/2 -translate-y-1/2 -left-40" size="lg" />
 
-      <div className="relative max-w-7xl mx-auto px-6">
+      <div className="relative container-shell">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left content */}
           <div>
@@ -32,30 +46,31 @@ export function WordPressSync() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               className="mb-5"
             >
-              <SectionLabel>Plugin Synchronisation</SectionLabel>
+                <SectionLabel>Existing Infrastructure</SectionLabel>
             </motion.div>
             <motion.h2
               initial={{ opacity: 0, y: 16 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.1 }}
-              className="font-display text-4xl md:text-5xl font-700 text-text-primary mb-5 leading-tight"
+              className="heading-section text-text-primary mb-5"
             >
-              Enterprise-grade sync.
+              Connect Your Existing Commerce Infrastructure
               <br />
-              <span className="text-gradient">Zero complexity.</span>
+              <span className="text-gradient">Without Rebuilding.</span>
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.15 }}
-              className="text-text-secondary mb-10 leading-relaxed"
+              className="text-body text-text-secondary mb-10"
             >
-              Connect your WordPress site through the Marvéo Connector Plugin.
-              Secure, token-validated, and always in sync with your GitHub
-              codebase. No credentials stored. No config hell.
+              Marvéo connects with existing commerce websites, operational
+              systems, and digital infrastructure - allowing businesses to
+              modernize workflows, centralize operations, and scale without
+              disrupting their current ecosystem.
             </motion.p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               {SYNC_FEATURES.map((feat, i) => {
                 const Icon = feat.icon;
                 return (
@@ -70,13 +85,20 @@ export function WordPressSync() {
                       <Icon className="w-4 h-4 text-accent" />
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-text-primary mb-0.5">{feat.label}</div>
-                      <div className="text-xs text-text-secondary leading-relaxed">{feat.desc}</div>
+                      <div className="font-display font-700 text-base md:text-lg leading-snug text-text-primary mb-0.5">
+                        {feat.label}
+                      </div>
+                      <div className="text-sm text-text-secondary leading-relaxed">{feat.desc}</div>
                     </div>
                   </motion.div>
                 );
               })}
             </div>
+
+            <p className="text-sm text-text-muted font-mono flex items-center gap-2">
+              <CheckCircle2 className="w-3.5 h-3.5 text-success" />
+              Compatible with modern commerce platforms, existing business websites, APIs, and operational infrastructures.
+            </p>
           </div>
 
           {/* Right visual */}
@@ -91,7 +113,7 @@ export function WordPressSync() {
               <div className="px-5 py-4 border-b border-white/6 flex items-center justify-between bg-bg-secondary/40">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-success animate-glow-pulse" />
-                  <span className="text-sm font-mono text-text-secondary">marveo-connector</span>
+                  <span className="text-sm font-mono text-text-secondary">marveo-infrastructure</span>
                 </div>
                 <span className="text-xs font-mono text-text-muted px-2.5 py-1 bg-success/10 border border-success/20 rounded-md text-success">
                   Connected
@@ -101,10 +123,10 @@ export function WordPressSync() {
               {/* Connection diagram */}
               <div className="p-6 space-y-3">
                 {[
-                  { label: "WordPress Site", sub: "yourdomain.com", status: "live", col: "text-accent" },
-                  { label: "Marvéo Connector Plugin", sub: "v1.2.0 · auto-update enabled", status: "sync", col: "text-success" },
-                  { label: "GitHub Repository", sub: "marveocommerce/your-site", status: "watching", col: "text-warning" },
-                  { label: "Marvéo Dashboard", sub: "app.marveo.co/workspace", status: "live", col: "text-accent" },
+                  { label: "Existing Commerce Website", sub: "yourdomain.com", status: "connected", col: "text-accent" },
+                  { label: "Marvéo Infrastructure Connector", sub: "Token generated and verified", status: "verified", col: "text-success" },
+                  { label: "Commerce Operations API", sub: "Products, orders, and customers", status: "active", col: "text-warning" },
+                  { label: "Marvéo Workspace", sub: "Operations ready", status: "live", col: "text-accent" },
                 ].map((node, i) => (
                   <div key={node.label}>
                     <div className="flex items-center justify-between p-4 rounded-xl bg-bg-card border border-white/5">
@@ -116,7 +138,7 @@ export function WordPressSync() {
                         className={`text-xs font-mono px-2.5 py-1 rounded-lg border ${
                           node.status === "live"
                             ? "text-success bg-success/10 border-success/20"
-                            : node.status === "sync"
+                            : node.status === "verified"
                             ? "text-accent bg-accent/10 border-accent/20"
                             : "text-warning bg-warning/10 border-warning/20"
                         }`}
@@ -135,12 +157,12 @@ export function WordPressSync() {
 
               {/* Token display */}
               <div className="mx-5 mb-5 p-4 rounded-xl bg-bg-card border border-accent/12">
-                <div className="text-xs text-text-muted font-mono mb-2">Activation token</div>
+                <div className="text-xs text-text-muted font-mono mb-2">Connector token</div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-mono text-accent tracking-widest">
                     mvt_••••••••••••••••7f3a
                   </span>
-                  <span className="text-xs text-success font-mono">validated</span>
+                  <span className="text-xs text-success font-mono">domain verified</span>
                 </div>
               </div>
             </div>

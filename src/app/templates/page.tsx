@@ -10,18 +10,7 @@ import { PageHero } from "@/components/shared/PageHero";
 import { SECTORS, TEMPLATE_PREVIEWS } from "@/constants";
 import { cn } from "@/lib/utils";
 
-const ALL_TEMPLATES = [
-  ...TEMPLATE_PREVIEWS,
-  { id: 7,  name: "AgencyOne",      sector: "Corporate",     tags: ["Agency", "Portfolio"],  featured: false },
-  { id: 8,  name: "Prestige",       sector: "Corporate",     tags: ["Consulting", "B2B"],    featured: true  },
-  { id: 9,  name: "ShopNova",       sector: "Ecommerce",     tags: ["Fashion", "Shopify"],   featured: false },
-  { id: 10, name: "PropElite",      sector: "Real Estate",   tags: ["Luxury", "Listings"],   featured: true  },
-  { id: 11, name: "HealthFirst",    sector: "Healthcare",    tags: ["Clinic", "HIPAA"],      featured: false },
-  { id: 12, name: "EduSpark",       sector: "Education",     tags: ["Academy", "Online"],    featured: false },
-  { id: 13, name: "BlitzPage",      sector: "Landing Pages", tags: ["Ads", "Conversion"],    featured: true  },
-  { id: 14, name: "StoreFront Pro", sector: "Ecommerce",     tags: ["Retail", "WooCommerce"],featured: false },
-  { id: 15, name: "ClinicPlus",     sector: "Healthcare",    tags: ["Hospital", "Booking"],  featured: false },
-];
+const ALL_TEMPLATES = TEMPLATE_PREVIEWS;
 
 const FILTERS = ["All", ...SECTORS.map((s) => s.label)];
 
@@ -66,7 +55,7 @@ export default function TemplatesPage() {
                 placeholder="Search templates..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-bg-card border border-white/8 rounded-xl text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/40 font-body"
+                className="w-full pl-10 pr-4 py-3 bg-bg-card border border-white/8 rounded-xl text-base text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/40 font-body"
               />
             </div>
             {/* Sector filters */}
@@ -76,7 +65,7 @@ export default function TemplatesPage() {
                   key={f}
                   onClick={() => setActive(f)}
                   className={cn(
-                    "px-4 py-2 rounded-xl text-sm font-medium transition-all border",
+                    "px-4 py-2.5 rounded-xl text-[15px] font-semibold transition-all border",
                     active === f
                       ? "bg-accent/15 text-accent border-accent/25"
                       : "bg-white/3 text-text-muted border-white/7 hover:text-text-secondary hover:bg-white/6"
@@ -89,7 +78,7 @@ export default function TemplatesPage() {
           </div>
 
           {/* Results count */}
-          <div className="flex items-center gap-2 mb-6 text-sm text-text-muted">
+          <div className="flex items-center gap-2 mb-6 text-base text-text-muted">
             <SlidersHorizontal className="w-4 h-4" />
             {filtered.length} template{filtered.length !== 1 ? "s" : ""} found
           </div>
@@ -142,15 +131,18 @@ export default function TemplatesPage() {
                         </div>
                       )}
                       <div className="absolute inset-0 bg-bg-primary/0 group-hover:bg-bg-primary/20 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
-                        <button className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur border border-white/15 text-white text-xs font-medium rounded-lg">
+                        <Link
+                          href={`/contact?intent=template-preview&template=${encodeURIComponent(tpl.name)}`}
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 backdrop-blur border border-white/15 text-white text-xs font-medium rounded-lg"
+                        >
                           <ExternalLink className="w-3 h-3" /> Preview
-                        </button>
+                        </Link>
                       </div>
                     </div>
                     {/* Info */}
                     <div className="p-5">
                       <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-display font-600 text-text-primary text-sm">{tpl.name}</h3>
+                        <h3 className="heading-card text-text-primary text-base">{tpl.name}</h3>
                         <span className="text-[10px] font-mono px-2 py-0.5 rounded-md"
                           style={{ color: COLORS[tpl.sector], background: `${COLORS[tpl.sector]}12`, border: `1px solid ${COLORS[tpl.sector]}25` }}>
                           {tpl.sector}
@@ -161,8 +153,8 @@ export default function TemplatesPage() {
                           <span key={tag} className="text-[10px] px-2 py-0.5 rounded-md bg-white/4 text-text-muted border border-white/6 font-mono">{tag}</span>
                         ))}
                       </div>
-                      <Link href={`/templates/${tpl.id}`}
-                        className="flex items-center gap-1.5 text-xs font-semibold text-accent hover:text-accent-bright transition-colors group/link">
+                      <Link href={`/contact?intent=deploy-template&template=${encodeURIComponent(tpl.name)}`}
+                        className="flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-bright transition-colors group/link">
                         Deploy template
                         <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
                       </Link>

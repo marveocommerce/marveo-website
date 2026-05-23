@@ -5,7 +5,6 @@ import { Footer } from "@/components/layout/Footer";
 import { PageHero } from "@/components/shared/PageHero";
 import { GlowOrb } from "@/components/shared/GlowOrb";
 import { ABOUT_VALUES } from "@/constants";
-import { siteConfig } from "@/config/site";
 
 const ICONS: Record<string, React.ElementType> = { Target, Zap, Globe };
 
@@ -16,8 +15,8 @@ export default function AboutPage() {
       <main>
         <PageHero
           label="About Marvéo"
-          title={<>We&apos;re building the<br /><span className="text-gradient">OS for the web.</span></>}
-          description="Marvéo was built because managing websites for modern businesses was still unnecessarily complex. We're changing that — one deployment at a time."
+          title={<>The Operational Layer for<br /><span className="text-gradient">Modern Commerce.</span></>}
+          description="Marvéo centralizes operational workflows, infrastructure coordination, deployments, and commerce environments into one scalable operational platform."
         />
 
         <section className="max-w-4xl mx-auto px-6 py-16">
@@ -27,7 +26,7 @@ export default function AboutPage() {
             <div className="relative">
               <div className="text-xs font-mono text-accent uppercase tracking-widest mb-5">Our Mission</div>
               <blockquote className="font-display text-2xl md:text-3xl font-600 text-text-primary leading-snug">
-                &ldquo;Any website content or business platform should be dynamically importable into Marvéo and editable without requiring heavy technical expertise.&rdquo;
+                &ldquo;Modern commerce businesses should operate from connected operational infrastructure - not fragmented dashboards, plugins, and disconnected workflows.&rdquo;
               </blockquote>
             </div>
           </div>
@@ -35,27 +34,31 @@ export default function AboutPage() {
           {/* Story */}
           <div className="mb-20">
             <h2 className="font-display text-3xl font-700 text-text-primary mb-6">The story</h2>
-            <div className="space-y-4 text-text-secondary leading-relaxed text-sm">
+            <div className="space-y-4 text-text-secondary leading-relaxed text-base md:text-[1.05rem]">
               <p>
-                Marvéo started as a product line within{" "}
-                <a href={siteConfig.links.avario} target="_blank" rel="noopener noreferrer"
-                  className="text-accent hover:text-accent-bright transition-colors">
-                  Avario Digitals
-                </a>{" "}
-                — a digital agency that spent years building websites for businesses across multiple sectors.
+                Modern businesses increasingly operate across fragmented
+                operational systems, disconnected workflows, deployment
+                environments, and infrastructure layers. Marvéo was built to
+                centralize those operational experiences into one scalable
+                platform environment.
               </p>
               <p>
-                We saw the same problem repeating: businesses would pay significant sums to have websites built, then struggle to manage them without calling a developer every time something needed updating. WordPress helped, but its admin interface was designed for publishers, not operators.
+                As organizations scale, operational complexity compounds.
+                Teams lose visibility across commerce execution, deployment
+                coordination, and cross-functional workflows. Marvéo creates a
+                single operational surface that keeps those systems aligned.
               </p>
               <p>
-                Marvéo is our answer. A clean, modern operating system for website deployment and management that meets businesses where they are — whether they&apos;re running traditional WordPress, a headless architecture, or a full custom Next.js stack.
+                The platform is designed for operational efficiency,
+                infrastructure readiness, and connected system visibility - so
+                businesses can execute faster without increasing fragmentation.
               </p>
             </div>
           </div>
 
           {/* Values — from constants */}
           <div className="mb-20">
-            <h2 className="font-display text-3xl font-700 text-text-primary mb-10">What we believe</h2>
+            <h2 className="font-display text-3xl font-700 text-text-primary mb-10">Operational Principles</h2>
             <div className="space-y-5">
               {ABOUT_VALUES.map((v) => {
                 const Icon = ICONS[v.icon];
@@ -77,19 +80,21 @@ export default function AboutPage() {
           {/* CTA */}
           <div className="text-center">
             <h2 className="font-display text-3xl font-700 text-text-primary mb-4">
-              Ready to see it in action?
+              Experience Modern Commerce Operations
             </h2>
             <p className="text-text-secondary mb-8">
-              Book a demo and we&apos;ll walk you through what Marvéo can do for your business.
+              Explore how Marvéo unifies infrastructure, workflows, and deployment execution through one operational workspace.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/contact"
+              <Link href="https://app.getmarveo.com/setup/mvp"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center gap-2 px-7 py-3.5 bg-accent hover:bg-accent-bright text-white font-semibold text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(79,142,247,0.3)]">
-                Book a Demo <ArrowRight className="w-4 h-4" />
+                Launch Workspace <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/templates"
+              <Link href="/deployments"
                 className="flex items-center gap-2 px-7 py-3.5 bg-white/5 hover:bg-white/8 border border-white/10 text-text-secondary hover:text-text-primary font-semibold text-sm rounded-xl transition-all">
-                Browse Templates
+                Explore Platform Experience
               </Link>
             </div>
           </div>
