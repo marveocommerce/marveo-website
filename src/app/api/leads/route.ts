@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { sendMail } from "@/lib/sendMail";
+import { waitlistConfirmationEmailHTML, contactConfirmationEmailHTML } from "@/lib/emailTemplates";
 
 type LeadKind = "contact" | "waitlist";
 
@@ -42,15 +44,24 @@ async function sendWebhook(url: string, payload: Record<string, unknown>) {
   }
 }
 
-async function sendLeadEmail(payload: Record<string, unknown>) {
-  const resendKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.LEADS_ALERT_EMAIL;
 
-  if (!resendKey || !toEmail) {
-    return false;
+// Determine admin recipient based on inquiry type
+function getAdminRecipient(kind: LeadKind, inquiryType?: string): string {
+  if (kind === "waitlist") return process.env.LEADS_ALERT_EMAIL!;
+  if (!inquiryType) return process.env.LEADS_ALERT_EMAIL!;
+  const t = inquiryType.toLowerCase();
+  if (["strategy", "consultation", "pricing", "plans"].some((x) => t.includes(x))) {
+    return process.env.SALES_ALERT_EMAIL || process.env.LEADS_ALERT_EMAIL!;
   }
+  if (t.includes("partnership") || t.includes("agency")) {
+    return process.env.PARTNERS_ALERT_EMAIL || process.env.LEADS_ALERT_EMAIL!;
+  }
+  return process.env.LEADS_ALERT_EMAIL!;
+}
 
+async function sendAdminAndConfirmationEmails(payload: Record<string, unknown>) {
   const kind = payload.kind === "waitlist" ? "Waiting List" : "Contact";
+  const adminTo = getAdminRecipient(payload.kind, payload.inquiryType);
   const summary = [
     `Type: ${kind}`,
     `Email: ${String(payload.email ?? "")}`,
@@ -66,22 +77,30 @@ async function sendLeadEmail(payload: Record<string, unknown>) {
     .filter(Boolean)
     .join("\n");
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${resendKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: process.env.LEADS_FROM_EMAIL || "Marveo Leads <onboarding@getmarveo.com>",
-      to: [toEmail],
-      subject: `${kind} submission from ${String(payload.email)}`,
-      text: summary,
-    }),
+  // Admin alert (plain text)
+  await sendMail({
+    to: adminTo,
+    subject: `${kind} submission from ${String(payload.email)}`,
+    text: summary,
+    html: `<pre style="font-size:1rem;line-height:1.6;font-family:monospace;white-space:pre-wrap;">${summary}</pre>`
   });
 
-  if (!response.ok) {
-    throw new Error(`Resend failed (${response.status})`);
+
+  // Confirmation to client (HTML)
+  if (payload.kind === "waitlist") {
+    await sendMail({
+      to: String(payload.email),
+      subject: "You’re on the Marveo Waitlist!",
+      html: waitlistConfirmationEmailHTML({ name: payload.name }),
+      text: `Welcome${payload.name ? ", " + payload.name : ""}!\n\nYou’re officially on the Marveo waitlist! You’ll get early access updates as we roll out. — Marveo Team`,
+    });
+  } else {
+    await sendMail({
+      to: String(payload.email),
+      subject: "We’ve received your message at Marveo",
+      html: contactConfirmationEmailHTML({ name: payload.name }),
+      text: `Thank you${payload.name ? ", " + payload.name : ""}!\n\nWe’ve received your message and the Marveo Team will be in touch soon. — Marveo Team`,
+    });
   }
 
   return true;
@@ -139,9 +158,9 @@ export async function POST(request: Request) {
       channels.push("webhook");
     }
 
-    if (await sendLeadEmail(payload)) {
-      channels.push("resend");
-    }
+
+    await sendAdminAndConfirmationEmails(payload);
+    channels.push("smtp");
 
     if (channels.length === 0) {
       console.info("[leads] Submission captured without external provider", payload);
