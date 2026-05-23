@@ -16,18 +16,19 @@ import { siteConfig } from "@/config/site";
  *
  * appUrl is empty (""):
  *   Login            → /login    (internal information page)
- *   Start Setup      → /contact  (book a demo)
+ *   Start Setup      → /pricing  (pricing and checkout first)
  *
  * appUrl is set (e.g. "https://app.marveo.co"):
  *   Login            → https://app.marveo.co/login          (external, new tab)
- *   Start Setup      → https://app.marveo.co/setup/activate (external, new tab)
+ *   Start Setup      → /pricing (marketing checkout flow)
  *
  * To switch to live: update appUrl in src/config/site.ts only.
  * No other file needs to change.
  */
 const loginHref      = siteConfig.appUrl ? `${siteConfig.appUrl}/login`          : "/login";
-const deploymentHref = siteConfig.appUrl ? `${siteConfig.appUrl}/setup/mvp` : "/contact?intent=start-setup";
-const isExternal     = !!siteConfig.appUrl;
+const deploymentHref = "/pricing";
+const loginExternal  = !!siteConfig.appUrl;
+const deploymentExternal = false;
 
 const NAV_ITEMS = [
   { id: "platform", label: "Platform" },
@@ -200,14 +201,14 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href={loginHref}
-              {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              {...(loginExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               className="btn-base bg-white/4 hover:bg-white/8 border border-white/14 text-text-secondary hover:text-text-primary"
             >
               Sign In
             </Link>
             <Link
               href={deploymentHref}
-              {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              {...(deploymentExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               className="btn-base group bg-accent/88 hover:bg-accent text-white border border-accent/35 shadow-[0_10px_28px_-18px_rgba(79,142,247,0.85),inset_0_1px_0_rgba(255,255,255,0.15)] hover:-translate-y-0.5 transition-all duration-250"
             >
               Launch Workspace
@@ -273,7 +274,7 @@ export function Navbar() {
               <div className="mt-auto space-y-3 pt-8 border-t border-white/10">
                 <Link
                   href={loginHref}
-                  {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  {...(loginExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   onClick={() => setMobileOpen(false)}
                   className="btn-base w-full bg-white/4 border border-white/12 text-text-secondary hover:text-text-primary"
                 >
@@ -281,7 +282,7 @@ export function Navbar() {
                 </Link>
                 <Link
                   href={deploymentHref}
-                  {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  {...(deploymentExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   onClick={() => setMobileOpen(false)}
                   className="btn-base w-full bg-accent/90 text-white border border-accent/35 shadow-[0_14px_32px_-20px_rgba(79,142,247,0.8)]"
                 >

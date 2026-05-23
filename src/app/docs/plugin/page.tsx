@@ -69,9 +69,7 @@ export default function PluginDocsPage() {
             </p>
           </div>
           <div className="mt-8 text-center">
-            <Link href="https://app.getmarveo.com/setup/mvp"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link href="/pricing"
               className="inline-flex items-center gap-2 px-7 py-3.5 bg-accent hover:bg-accent-bright text-white font-semibold text-sm rounded-xl transition-all">
               Connect Infrastructure →
             </Link>

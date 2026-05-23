@@ -290,9 +290,7 @@ export default function DeploymentsPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3.5">
                 <Link
-                  href="https://app.getmarveo.com/setup/mvp"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/pricing"
                   className="btn-base bg-accent hover:bg-accent-bright border border-accent/30 text-white shadow-[0_14px_38px_-22px_rgba(79,142,247,0.82)]"
                 >
                   Explore Workspace <ArrowRight className="w-4 h-4" />
@@ -540,10 +538,10 @@ export default function DeploymentsPage() {
                           {activeInstallStep === INSTALL_STEPS.length - 1 ? "Workspace ready" : `Step ${activeInstallStep + 1} active`}
                         </motion.div>
                         <Link
-                          href={activeInstallStep === INSTALL_STEPS.length - 1 ? "/contact?intent=launch-workspace" : "/contact?intent=start-setup"}
+                          href="/pricing"
                           className="btn-base bg-accent hover:bg-accent-bright text-white px-7 shadow-[0_16px_36px_-24px_rgba(79,142,247,0.9)]"
                         >
-                          {activeInstallStep === INSTALL_STEPS.length - 1 ? "Launch" : "Continue"}
+                          {activeInstallStep === INSTALL_STEPS.length - 1 ? "Choose Plan" : "Continue to Pricing"}
                         </Link>
                       </div>
                     </div>
@@ -767,9 +765,7 @@ export default function DeploymentsPage() {
 
             <div className="text-center mt-10">
               <Link
-                href="https://app.getmarveo.com/setup/mvp"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/pricing"
                 className="inline-flex items-center gap-2 text-accent hover:text-accent-bright text-sm font-semibold"
               >
                 View Operational Capabilities <Eye className="w-4 h-4" />

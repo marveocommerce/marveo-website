@@ -1,27 +1,117 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { Suspense, useEffect, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, Sparkles, X } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2, Sparkles, X } from "lucide-react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PageHero } from "@/components/shared/PageHero";
 import { cn } from "@/lib/utils";
 
 type GeoRegion = "nigeria" | "global";
+type BillingInterval = "MONTHLY" | "ANNUAL";
+type PaymentProvider = "PAYSTACK" | "STRIPE";
+
+type IntervalPrice = {
+  amount: number;
+  setupFee: number;
+};
 
 type PricingPlan = {
   id: string;
   name: string;
-  price: Record<GeoRegion, string>;
+  pricing: {
+    monthly: IntervalPrice;
+    annual: IntervalPrice;
+    currency: string;
+    annualDiscountPercent?: number;
+  };
   description: string;
   features: string[];
   cta: string;
   recommendedFor: string;
   badges: string[];
   href: string;
+  paymentProvider?: PaymentProvider;
+  trialAvailable?: boolean;
+  trialDurationDays?: number;
   featured?: boolean;
+};
+
+type PlanApiResponse = {
+  country: string;
+  currency: string;
+  plans: Array<{
+    planId: string;
+    name: string;
+    description: string;
+    paymentProvider: PaymentProvider;
+    pricing: {
+      country: string;
+      currency: string;
+      monthly: IntervalPrice;
+      annual: IntervalPrice;
+      annualDiscountPercent?: number;
+    };
+    trial: {
+      available: boolean;
+      durationDays: number;
+    };
+    workspaceLimits: {
+      maxWorkspaces: number;
+    };
+    featureEntitlements: string[];
+  }>;
+};
+
+type CheckoutForm = {
+  email: string;
+  name: string;
+  phone: string;
+  company: string;
+  selectedTemplateId: string;
+  paymentMode: "TRIAL" | "PAID";
+  paymentReference: string;
+};
+
+type RecoveryLookup = {
+  email: string;
+  sessionId: string;
+  paymentReference: string;
+};
+
+type RecoveryResponse = {
+  ok: true;
+  sessionId: string;
+  redirectUrl: string;
+  subscriptionStatus: "TRIAL" | "TRIAL_EXPIRED" | "EXPIRED" | "ACTIVE" | "PAST_DUE" | "CANCELLED";
+  billingInterval: BillingInterval;
+  intendedBillingInterval: BillingInterval;
+  paymentVerificationStatus?: string;
+  recoveryStatus: "RECOVERED" | "REFRESHED";
+};
+
+type UpgradePreparationResponse = {
+  ok: true;
+  subscriptionId: string;
+  organizationId: string;
+  selectedPlanId: string;
+  billingInterval: BillingInterval;
+  intendedBillingInterval: BillingInterval;
+  provider: PaymentProvider;
+  currency: string;
+  amount: number;
+  paymentVerificationStatus: string;
+  redirectUrl: string;
+  requiresPaymentVerification: boolean;
+};
+
+type PaymentVerificationResponse = {
+  ok: true;
+  redirectUrl: string;
+  error?: string;
 };
 
 type ModuleCard = {
@@ -42,10 +132,16 @@ type CalculatorAnswers = {
 };
 
 const PRICING_PLANS: PricingPlan[] = [
+  // Fallback-only pricing. The UI should prefer backend values from /api/commercial/plans.
   {
     id: "starter",
     name: "Starter Workspace",
-    price: { nigeria: "₦25,000/month", global: "$49/month" },
+    pricing: {
+      currency: "NGN",
+      monthly: { amount: 25000, setupFee: 0 },
+      annual: { amount: 250000, setupFee: 0 },
+      annualDiscountPercent: 17,
+    },
     description: "For founders, creators, and growing businesses centralizing operational workflows.",
     features: [
       "1 operational workspace",
@@ -60,12 +156,20 @@ const PRICING_PLANS: PricingPlan[] = [
     cta: "Launch Workspace",
     recommendedFor: "Small businesses, creators, beauty brands, startups",
     badges: ["Connected", "Operational"],
-    href: "/setup/activate",
+    href: "#checkout",
+    paymentProvider: "PAYSTACK",
+    trialAvailable: true,
+    trialDurationDays: 14,
   },
   {
     id: "growth",
     name: "Growth Operations",
-    price: { nigeria: "₦85,000/month", global: "$149/month" },
+    pricing: {
+      currency: "NGN",
+      monthly: { amount: 85000, setupFee: 0 },
+      annual: { amount: 850000, setupFee: 0 },
+      annualDiscountPercent: 17,
+    },
     description: "For businesses managing multiple workflows, teams, and operational systems.",
     features: [
       "5 operational workspaces",
@@ -81,13 +185,20 @@ const PRICING_PLANS: PricingPlan[] = [
     cta: "Scale Operations",
     recommendedFor: "Agencies, ecommerce brands, healthcare, real estate",
     badges: ["MOST POPULAR", "Infrastructure-ready"],
-    href: "/setup/activate",
+    href: "#checkout",
+    paymentProvider: "PAYSTACK",
+    trialAvailable: true,
+    trialDurationDays: 14,
     featured: true,
   },
   {
     id: "enterprise",
     name: "Enterprise Infrastructure",
-    price: { nigeria: "Custom", global: "Custom" },
+    pricing: {
+      currency: "USD",
+      monthly: { amount: 0, setupFee: 0 },
+      annual: { amount: 0, setupFee: 0 },
+    },
     description: "For enterprise teams and agencies operating at scale across multiple operational environments.",
     features: [
       "Unlimited workspaces",
@@ -104,6 +215,9 @@ const PRICING_PLANS: PricingPlan[] = [
     recommendedFor: "Agencies, enterprise commerce, multi-brand operations",
     badges: ["Enterprise-ready"],
     href: "/contact",
+    paymentProvider: "STRIPE",
+    trialAvailable: false,
+    trialDurationDays: 0,
   },
 ];
 
@@ -156,6 +270,30 @@ const DEFAULT_CALCULATOR: CalculatorAnswers = {
   scope: "standard",
   team: "small",
 };
+
+const DEFAULT_CHECKOUT_FORM: CheckoutForm = {
+  email: "",
+  name: "",
+  phone: "",
+  company: "",
+  selectedTemplateId: "",
+  paymentMode: "TRIAL",
+  paymentReference: "",
+};
+
+const DEFAULT_RECOVERY_LOOKUP: RecoveryLookup = {
+  email: "",
+  sessionId: "",
+  paymentReference: "",
+};
+
+function formatBackendPrice(currency: string, amount: number) {
+  return new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
 
 function formatMoney(region: GeoRegion, value: number) {
   const locale = region === "nigeria" ? "en-NG" : "en-US";
@@ -212,7 +350,9 @@ function calculateCostRange(region: GeoRegion, answers: CalculatorAnswers) {
   };
 }
 
-export default function PricingPage() {
+function PricingPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const detectedRegion = useSyncExternalStore<GeoRegion>(
     () => () => {},
     () => {
@@ -230,7 +370,301 @@ export default function PricingPage() {
   const region = detectedRegion;
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [answers, setAnswers] = useState<CalculatorAnswers>(DEFAULT_CALCULATOR);
+  const [plans, setPlans] = useState<PricingPlan[]>(PRICING_PLANS);
+  const [plansSource, setPlansSource] = useState<"backend" | "fallback">("fallback");
+  const [billingInterval, setBillingInterval] = useState<BillingInterval>("MONTHLY");
+  const [selectedPlanId, setSelectedPlanId] = useState<string>("starter");
+  const [checkout, setCheckout] = useState<CheckoutForm>(DEFAULT_CHECKOUT_FORM);
+  const [checkoutBusy, setCheckoutBusy] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string>("");
+  const [plansError, setPlansError] = useState<string>("");
+  const [recoveryLookup, setRecoveryLookup] = useState<RecoveryLookup>(DEFAULT_RECOVERY_LOOKUP);
+  const [recoveryBusy, setRecoveryBusy] = useState(false);
+  const [upgradeBusy, setUpgradeBusy] = useState(false);
+  const [recoveryError, setRecoveryError] = useState<string>("");
+  const [recoveryResult, setRecoveryResult] = useState<RecoveryResponse | null>(null);
   const estimate = calculateCostRange(region, answers);
+  const countryCode = region === "nigeria" ? "NG" : "US";
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadPlans() {
+      try {
+        setPlansError("");
+        // Backend pricing is the commercial source of truth. Static pricing below is fallback-only.
+        const response = await fetch(`/api/commercial/plans?country=${countryCode}`, { cache: "no-store" });
+        if (!response.ok) throw new Error("Could not load live plan data");
+
+        const payload = (await response.json()) as PlanApiResponse;
+        if (!payload?.plans?.length) throw new Error("No plans returned");
+
+        const mapped: PricingPlan[] = payload.plans.map((plan) => {
+          return {
+            id: plan.planId,
+            name: plan.name,
+            pricing: {
+              currency: plan.pricing.currency,
+              monthly: plan.pricing.monthly,
+              annual: plan.pricing.annual,
+              annualDiscountPercent: plan.pricing.annualDiscountPercent,
+            },
+            description: plan.description,
+            features: plan.featureEntitlements,
+            cta: plan.trial.available ? `Start ${plan.trial.durationDays}-day trial` : "Start paid onboarding",
+            recommendedFor: `${plan.workspaceLimits.maxWorkspaces === 999 ? "Unlimited" : plan.workspaceLimits.maxWorkspaces} workspace${plan.workspaceLimits.maxWorkspaces === 1 ? "" : "s"}`,
+            badges: [plan.trial.available ? "Trial available" : "Paid onboarding"],
+            href: "#checkout",
+            paymentProvider: plan.paymentProvider,
+            trialAvailable: plan.trial.available,
+            trialDurationDays: plan.trial.durationDays,
+            featured: plan.planId === "growth",
+          };
+        });
+
+        if (!mounted) return;
+        setPlans(mapped);
+        setPlansSource("backend");
+      } catch {
+        if (!mounted) return;
+        setPlans(PRICING_PLANS);
+        setPlansSource("fallback");
+        setPlansError("Live pricing is temporarily unavailable. Showing fallback pricing.");
+      }
+    }
+
+    void loadPlans();
+
+    return () => {
+      mounted = false;
+    };
+  }, [countryCode]);
+
+  const selectedPlan = plans.find((plan) => plan.id === selectedPlanId) ?? plans[0];
+  const selectedTemplateIdFromQuery = String(searchParams.get("selectedTemplateId") || "").trim();
+  const effectiveSelectedTemplateId = checkout.selectedTemplateId || selectedTemplateIdFromQuery;
+  const recoveredCanResume = recoveryResult?.subscriptionStatus === "TRIAL" || recoveryResult?.subscriptionStatus === "ACTIVE";
+  const recoveredNeedsPayment = Boolean(
+    recoveryResult && (
+      recoveryResult.subscriptionStatus === "TRIAL_EXPIRED"
+      || recoveryResult.subscriptionStatus === "EXPIRED"
+      || recoveryResult.subscriptionStatus === "PAST_DUE"
+      || recoveryResult.paymentVerificationStatus === "PENDING"
+    )
+  );
+
+  function continueToRedirect(redirectUrl: string) {
+    const resolvedRedirectUrl = new URL(redirectUrl, window.location.origin);
+    if (resolvedRedirectUrl.origin === window.location.origin) {
+      router.push(`${resolvedRedirectUrl.pathname}${resolvedRedirectUrl.search}${resolvedRedirectUrl.hash}`);
+      return;
+    }
+
+    window.open(resolvedRedirectUrl.toString(), "_self", "noopener,noreferrer");
+  }
+
+  async function verifyPaymentAndResolveRedirect(payload: {
+    provider: PaymentProvider;
+    paymentReference: string;
+    selectedPlanId?: string;
+    billingInterval?: BillingInterval;
+    organizationId?: string;
+    customerEmail?: string;
+    country?: string;
+    currency?: string;
+    amount?: number;
+  }) {
+    const verifyResponse = await fetch("/api/commercial/payment/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const verifyPayload = await verifyResponse.json().catch(() => null) as PaymentVerificationResponse | null;
+    if (!verifyResponse.ok || !verifyPayload?.redirectUrl) {
+      throw new Error(verifyPayload?.error || "Payment verification failed");
+    }
+
+    return verifyPayload.redirectUrl;
+  }
+
+  async function recoverExistingOnboarding() {
+    if (!recoveryLookup.email.trim() && !recoveryLookup.sessionId.trim()) {
+      setRecoveryError("Enter your work email or onboarding session ID.");
+      return;
+    }
+
+    try {
+      setRecoveryBusy(true);
+      setRecoveryError("");
+
+      const params = new URLSearchParams();
+      if (recoveryLookup.email.trim()) params.set("email", recoveryLookup.email.trim());
+      if (recoveryLookup.sessionId.trim()) params.set("sessionId", recoveryLookup.sessionId.trim());
+
+      const response = await fetch(`/api/commercial/onboarding/session?${params.toString()}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      const payload = await response.json().catch(() => null) as (RecoveryResponse & { error?: string }) | null;
+      if (!response.ok || !payload?.ok) {
+        throw new Error(payload?.error || "Unable to recover onboarding session.");
+      }
+
+      setRecoveryResult(payload);
+      setBillingInterval(payload.intendedBillingInterval || payload.billingInterval);
+      if (recoveryLookup.email.trim()) {
+        setCheckout((prev) => ({
+          ...prev,
+          email: prev.email || recoveryLookup.email.trim(),
+          paymentMode: payload.subscriptionStatus === "TRIAL_EXPIRED" ? "PAID" : prev.paymentMode,
+        }));
+      }
+    } catch (err) {
+      setRecoveryResult(null);
+      setRecoveryError(err instanceof Error ? err.message : "Unable to recover onboarding session.");
+    } finally {
+      setRecoveryBusy(false);
+    }
+  }
+
+  async function prepareRecoveredUpgrade() {
+    if (!recoveryResult) {
+      setRecoveryError("Recover an onboarding session before upgrading.");
+      return;
+    }
+
+    if (!recoveryLookup.paymentReference.trim()) {
+      setRecoveryError("Payment reference is required to verify the upgrade.");
+      return;
+    }
+
+    try {
+      setUpgradeBusy(true);
+      setRecoveryError("");
+
+      const upgradeResponse = await fetch("/api/commercial/subscription/upgrade", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: recoveryResult.sessionId,
+          email: recoveryLookup.email.trim() || undefined,
+          selectedPlanId: selectedPlan?.id,
+          billingInterval,
+          paymentReference: recoveryLookup.paymentReference.trim(),
+        }),
+      });
+
+      const upgradePayload = await upgradeResponse.json().catch(() => null) as (UpgradePreparationResponse & { error?: string }) | null;
+      if (!upgradeResponse.ok || !upgradePayload?.ok) {
+        throw new Error(upgradePayload?.error || "Unable to prepare subscription upgrade.");
+      }
+
+      const redirectUrl = await verifyPaymentAndResolveRedirect({
+        provider: upgradePayload.provider,
+        paymentReference: recoveryLookup.paymentReference.trim(),
+        selectedPlanId: upgradePayload.selectedPlanId,
+        billingInterval: upgradePayload.billingInterval,
+        organizationId: upgradePayload.organizationId,
+        customerEmail: recoveryLookup.email.trim() || checkout.email.trim() || undefined,
+        country: countryCode,
+        currency: upgradePayload.currency,
+        amount: upgradePayload.amount,
+      });
+
+      continueToRedirect(redirectUrl || upgradePayload.redirectUrl);
+    } catch (err) {
+      setRecoveryError(err instanceof Error ? err.message : "Unable to prepare or verify the upgrade.");
+    } finally {
+      setUpgradeBusy(false);
+    }
+  }
+
+  async function startCommercialOnboarding() {
+    if (!selectedPlan) {
+      setCheckoutError("Please select a plan.");
+      return;
+    }
+
+    if (!checkout.email.trim()) {
+      setCheckoutError("Email is required to start onboarding.");
+      return;
+    }
+
+    if (checkout.paymentMode === "PAID" && !checkout.paymentReference.trim()) {
+      setCheckoutError("Payment reference is required for paid onboarding.");
+      return;
+    }
+
+    try {
+      setCheckoutBusy(true);
+      setCheckoutError("");
+
+      const response = await fetch("/api/commercial/onboarding/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          selectedPlanId: selectedPlan.id,
+          selectedTemplateId: effectiveSelectedTemplateId || undefined,
+          country: countryCode,
+          billingInterval,
+          customer: {
+            email: checkout.email,
+            name: checkout.name,
+            phone: checkout.phone,
+            company: checkout.company,
+          },
+          paymentMode: checkout.paymentMode,
+          paymentReference: checkout.paymentMode === "PAID" ? checkout.paymentReference : undefined,
+          source: "marketing_website",
+        }),
+      });
+
+      const payload = await response.json().catch(() => null) as {
+        redirectUrl?: string;
+        error?: string;
+        organizationId?: string;
+        paymentVerificationStatus?: string;
+      } | null;
+      if (!response.ok || !payload) {
+        throw new Error(payload?.error || "Failed to start onboarding");
+      }
+
+      let redirectUrl = payload.redirectUrl;
+      const verificationProvider = plansSource === "backend"
+        ? (selectedPlan.paymentProvider || (countryCode === "NG" ? "PAYSTACK" : "STRIPE"))
+        : (countryCode === "NG" ? "PAYSTACK" : "STRIPE");
+      const verificationCurrency = plansSource === "backend" ? selectedPlan.pricing.currency : undefined;
+      const verificationAmount = plansSource === "backend"
+        ? (billingInterval === "ANNUAL" ? selectedPlan.pricing.annual.amount : selectedPlan.pricing.monthly.amount)
+        : undefined;
+
+      if (checkout.paymentMode === "PAID") {
+        redirectUrl = await verifyPaymentAndResolveRedirect({
+          provider: verificationProvider,
+          paymentReference: checkout.paymentReference,
+          selectedPlanId: selectedPlan.id,
+          billingInterval,
+          organizationId: payload.organizationId,
+          customerEmail: checkout.email,
+          country: countryCode,
+          currency: verificationCurrency,
+          amount: verificationAmount,
+        });
+      }
+
+      if (!redirectUrl) {
+        throw new Error("Onboarding redirect URL is missing");
+      }
+
+      continueToRedirect(redirectUrl);
+    } catch (err) {
+      setCheckoutError(err instanceof Error ? err.message : "Unable to start onboarding right now.");
+    } finally {
+      setCheckoutBusy(false);
+    }
+  }
 
   return (
     <>
@@ -247,11 +681,29 @@ export default function PricingPage() {
             <p className="text-sm text-text-secondary">
               Built for businesses operating across commerce, communication, infrastructure, and operational workflows.
             </p>
+            <div className="mt-5 inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
+              {(["MONTHLY", "ANNUAL"] as BillingInterval[]).map((interval) => (
+                <button
+                  key={interval}
+                  type="button"
+                  onClick={() => setBillingInterval(interval)}
+                  className={cn(
+                    "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+                    billingInterval === interval ? "bg-accent text-white" : "text-text-secondary hover:text-text-primary"
+                  )}
+                >
+                  {interval === "MONTHLY" ? "Monthly" : "Annual"}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-7 xl:gap-8 mb-16 items-stretch">
-            {PRICING_PLANS.map((plan, index) => {
-              const priceLabel = plan.price[region];
+            {plans.map((plan, index) => {
+              const isEnterpriseCustom = plan.id === "enterprise" && plan.pricing.monthly.amount === 0 && plan.pricing.annual.amount === 0;
+              const activePrice = billingInterval === "ANNUAL" ? plan.pricing.annual : plan.pricing.monthly;
+              const priceLabel = isEnterpriseCustom ? "Custom" : formatBackendPrice(plan.pricing.currency, activePrice.amount);
+              const priceSuffix = isEnterpriseCustom ? "" : billingInterval === "ANNUAL" ? "/year" : "/month";
 
               return (
                 <motion.article
@@ -301,7 +753,13 @@ export default function PricingPage() {
                       <span className="font-display text-4xl font-800 text-text-primary">
                         {priceLabel}
                       </span>
+                      {priceSuffix && <span className="pb-1 text-sm text-text-muted">{priceSuffix}</span>}
                     </div>
+                    {billingInterval === "ANNUAL" && plan.pricing.annualDiscountPercent ? (
+                      <p className="mb-3 text-xs font-mono uppercase tracking-[0.14em] text-success">
+                        Save {plan.pricing.annualDiscountPercent}% annually
+                      </p>
+                    ) : null}
                     <p className="text-sm text-text-secondary leading-relaxed mb-4">
                       {plan.description}
                     </p>
@@ -322,8 +780,13 @@ export default function PricingPage() {
                     ))}
                   </div>
 
-                  <Link
-                    href={plan.href}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedPlanId(plan.id);
+                      const section = document.getElementById("checkout");
+                      section?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
                     className={cn(
                       "relative flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all mt-auto",
                       plan.featured
@@ -333,11 +796,182 @@ export default function PricingPage() {
                   >
                     {plan.cta}
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
+                  </button>
                 </motion.article>
               );
             })}
           </div>
+
+          {plansSource === "fallback" && (
+            <p className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+              {plansError || "Showing fallback pricing while live pricing is unavailable."}
+            </p>
+          )}
+
+          <section id="checkout" className="mb-12 rounded-[1.85rem] border border-white/10 bg-white/[0.03] p-5 md:p-7">
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div>
+                <p className="text-[11px] font-mono uppercase tracking-[0.16em] text-text-muted mb-2">
+                  Commercial Onboarding
+                </p>
+                <h2 className="font-display text-2xl md:text-3xl font-800 tracking-tight text-text-primary">
+                  Create account, start trial or payment, continue onboarding.
+                </h2>
+                <p className="mt-3 text-body text-text-secondary max-w-xl">
+                  One Marvéo identity is used for pricing, billing, and MarvéoOS onboarding. No separate website-only account is created.
+                </p>
+                <div className="mt-5 rounded-xl border border-accent/20 bg-accent/10 px-4 py-3 text-sm text-text-primary">
+                  Selected plan: <span className="font-semibold">{selectedPlan?.name || "-"}</span> · <span className="font-semibold">{billingInterval === "ANNUAL" ? "Annual" : "Monthly"}</span>
+                  {effectiveSelectedTemplateId ? (
+                    <span> · Template: <span className="font-semibold">{effectiveSelectedTemplateId}</span></span>
+                  ) : null}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <input
+                  value={checkout.email}
+                  onChange={(e) => setCheckout((prev) => ({ ...prev, email: e.target.value }))}
+                  placeholder="Work email"
+                  className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-text-primary outline-none focus:border-accent/40"
+                />
+                <input
+                  value={checkout.name}
+                  onChange={(e) => setCheckout((prev) => ({ ...prev, name: e.target.value }))}
+                  placeholder="Full name"
+                  className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-text-primary outline-none focus:border-accent/40"
+                />
+                <input
+                  value={checkout.phone}
+                  onChange={(e) => setCheckout((prev) => ({ ...prev, phone: e.target.value }))}
+                  placeholder="Phone"
+                  className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-text-primary outline-none focus:border-accent/40"
+                />
+                <input
+                  value={checkout.company}
+                  onChange={(e) => setCheckout((prev) => ({ ...prev, company: e.target.value }))}
+                  placeholder="Company"
+                  className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-text-primary outline-none focus:border-accent/40"
+                />
+                <select
+                  value={checkout.paymentMode}
+                  onChange={(e) => setCheckout((prev) => ({ ...prev, paymentMode: e.target.value as "TRIAL" | "PAID" }))}
+                  className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-text-primary outline-none focus:border-accent/40"
+                >
+                  <option value="TRIAL">Start free trial</option>
+                  <option value="PAID">Proceed with paid onboarding</option>
+                </select>
+                {checkout.paymentMode === "PAID" && (
+                  <input
+                    value={checkout.paymentReference}
+                    onChange={(e) => setCheckout((prev) => ({ ...prev, paymentReference: e.target.value }))}
+                    placeholder="Payment reference"
+                    className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-text-primary outline-none focus:border-accent/40"
+                  />
+                )}
+
+                {checkoutError && <p className="text-sm text-red-300">{checkoutError}</p>}
+
+                <button
+                  type="button"
+                  onClick={startCommercialOnboarding}
+                  disabled={checkoutBusy}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-bright disabled:opacity-60"
+                >
+                  {checkoutBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+                  {checkout.paymentMode === "TRIAL" ? "Start trial and continue" : "Continue after payment"}
+                </button>
+
+                <div className="rounded-2xl border border-white/10 bg-black/10 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-[11px] font-mono uppercase tracking-[0.16em] text-text-muted mb-1.5">
+                        Resume Existing Onboarding
+                      </p>
+                      <p className="text-sm text-text-secondary leading-relaxed">
+                        Recover a previous trial or paid onboarding by work email or session ID, then continue or upgrade from here.
+                      </p>
+                    </div>
+                    {recoveryResult && (
+                      <span className="rounded-full border border-accent/20 bg-accent/10 px-2.5 py-1 text-[10px] font-mono uppercase tracking-[0.16em] text-accent-bright">
+                        {recoveryResult.recoveryStatus}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-4 space-y-3">
+                    <input
+                      value={recoveryLookup.email}
+                      onChange={(e) => setRecoveryLookup((prev) => ({ ...prev, email: e.target.value }))}
+                      placeholder="Recover with work email"
+                      className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-text-primary outline-none focus:border-accent/40"
+                    />
+                    <input
+                      value={recoveryLookup.sessionId}
+                      onChange={(e) => setRecoveryLookup((prev) => ({ ...prev, sessionId: e.target.value }))}
+                      placeholder="Or paste onboarding session ID"
+                      className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-text-primary outline-none focus:border-accent/40"
+                    />
+                    <button
+                      type="button"
+                      onClick={recoverExistingOnboarding}
+                      disabled={recoveryBusy}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-text-primary transition-colors hover:bg-white/10 disabled:opacity-60"
+                    >
+                      {recoveryBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+                      Recover existing onboarding
+                    </button>
+                  </div>
+
+                  {recoveryResult && (
+                    <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-text-secondary">
+                      <p className="text-text-primary">
+                        Status: <span className="font-semibold">{recoveryResult.subscriptionStatus.replaceAll("_", " ")}</span>
+                      </p>
+                      <p className="mt-1">
+                        Billing interval: <span className="font-semibold">{recoveryResult.intendedBillingInterval === "ANNUAL" ? "Annual" : "Monthly"}</span>
+                      </p>
+                      {recoveredCanResume && (
+                        <button
+                          type="button"
+                          onClick={() => continueToRedirect(recoveryResult.redirectUrl)}
+                          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-bright"
+                        >
+                          <ArrowRight className="h-4 w-4" />
+                          Continue recovered onboarding
+                        </button>
+                      )}
+
+                      {recoveredNeedsPayment && (
+                        <div className="mt-4 space-y-3 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4">
+                          <p className="text-sm text-amber-100 leading-relaxed">
+                            This onboarding needs a verified paid subscription before setup can continue. Keep your selected plan and interval above, then verify with your payment reference.
+                          </p>
+                          <input
+                            value={recoveryLookup.paymentReference}
+                            onChange={(e) => setRecoveryLookup((prev) => ({ ...prev, paymentReference: e.target.value }))}
+                            placeholder="Payment reference for upgrade or outstanding payment"
+                            className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-text-primary outline-none focus:border-accent/40"
+                          />
+                          <button
+                            type="button"
+                            onClick={prepareRecoveredUpgrade}
+                            disabled={upgradeBusy}
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-bright disabled:opacity-60"
+                          >
+                            {upgradeBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+                            Upgrade and continue onboarding
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {recoveryError && <p className="mt-3 text-sm text-red-300">{recoveryError}</p>}
+                </div>
+              </div>
+            </div>
+          </section>
 
           <div className="mb-12 rounded-2xl border border-white/10 bg-white/[0.02] p-5 md:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
@@ -606,5 +1240,13 @@ export default function PricingPage() {
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense fallback={null}>
+      <PricingPageContent />
+    </Suspense>
   );
 }

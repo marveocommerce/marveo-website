@@ -6,11 +6,8 @@ import { useInView } from "react-intersection-observer";
 import { ArrowRight, Building2, Link2, Rocket, ShieldCheck } from "lucide-react";
 import { SectionLabel } from "@/components/shared/SectionLabel";
 import Link from "next/link";
-import { siteConfig } from "@/config/site";
 
-const launchWorkspaceHref = siteConfig.appUrl
-  ? `${siteConfig.appUrl}/setup/mvp`
-  : "/contact?intent=launch-workspace";
+const launchWorkspaceHref = "/pricing";
 
 const PATHS = [
   {

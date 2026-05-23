@@ -86,9 +86,7 @@ export default function AboutPage() {
               Explore how Marvéo unifies infrastructure, workflows, and deployment execution through one operational workspace.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="https://app.getmarveo.com/setup/mvp"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link href="/pricing"
                 className="flex items-center gap-2 px-7 py-3.5 bg-accent hover:bg-accent-bright text-white font-semibold text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(79,142,247,0.3)]">
                 Launch Workspace <ArrowRight className="w-4 h-4" />
               </Link>

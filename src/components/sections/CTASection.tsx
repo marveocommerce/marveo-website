@@ -5,12 +5,11 @@ import { useInView } from "react-intersection-observer";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { GlowOrb } from "@/components/shared/GlowOrb";
-import { siteConfig } from "@/config/site";
 
 export function CTASection() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
-  const launchHref = siteConfig.appUrl ? `${siteConfig.appUrl}/setup/mvp` : "/contact?intent=start-setup";
-  const launchExternal = !!siteConfig.appUrl;
+  const launchHref = "/pricing";
+  const launchExternal = false;
 
   return (
     <section ref={ref} className="section-spacing relative overflow-hidden">

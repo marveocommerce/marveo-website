@@ -12,9 +12,10 @@ export const siteConfig = {
    * Leave empty ("") while the platform is not yet deployed.
    * Once the platform domain is confirmed and live, update this value.
    *
-   * Effect on Navbar:
-   *   Empty  → Login goes to /login   | Start Deployment goes to /contact
-   *   Set    → Both buttons open the live platform in a new tab
+  * Effect on Navbar:
+  *   Empty  → Login goes to /login
+  *   Set    → Login opens live platform in a new tab
+  *   Start Deployment always routes to /pricing first.
    *
    * Used by: src/components/layout/Navbar.tsx
    */
