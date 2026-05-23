@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { sendMail } from "@/lib/sendMail";
+import { sendMail } from "../../../lib/sendMail";
 import { waitlistConfirmationEmailHTML, contactConfirmationEmailHTML } from "@/lib/emailTemplates";
 
 type LeadKind = "contact" | "waitlist";

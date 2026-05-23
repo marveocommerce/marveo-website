@@ -6,6 +6,7 @@ import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { WaitingListPopup } from "@/components/shared/WaitingListPopup";
 import { MarketingScripts } from "@/components/analytics/MarketingScripts";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
 
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -142,11 +143,13 @@ export default function RootLayout({
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
         <div className="noise-overlay" />
-        {children}
-        <WaitingListPopup />
-        <MarketingScripts />
-        <Analytics />
-        <SpeedInsights />
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          {children}
+          <WaitingListPopup />
+          <MarketingScripts />
+          <Analytics />
+          <SpeedInsights />
+        </ThemeProvider>
       </body>
     </html>
   );
