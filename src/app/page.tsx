@@ -160,22 +160,35 @@ export default function Home() {
 
             <div className="mt-10">
               <div className="relative mx-auto max-w-5xl px-2 py-2 sm:px-3">
-                <div className="grid grid-cols-1 gap-3 text-left md:grid-cols-4 md:gap-4">
-                  <div className="mx-auto w-full max-w-[245px] rounded-2xl border border-white/22 bg-white/[0.09] px-4 py-3 backdrop-blur-md">
+                <div className="relative grid grid-cols-1 gap-4 text-left md:grid-cols-4 md:gap-4">
+                  <div className="pointer-events-none absolute bottom-6 left-[13px] top-6 w-px bg-gradient-to-b from-[#4f8ef7]/70 via-[#4f8ef7]/40 to-[#4f8ef7]/10 md:hidden" />
+
+                  <div className="relative mx-auto w-full max-w-none pl-9 md:max-w-[245px] md:pl-0">
+                    <span className="absolute left-0 top-4 z-10 flex h-[26px] w-[26px] items-center justify-center rounded-full border border-[#4f8ef7]/70 bg-[#4f8ef7]/25 text-[11px] font-semibold text-[#d7e7ff] md:hidden">
+                      1
+                    </span>
+                    <div className="w-full rounded-2xl border border-white/22 bg-white/[0.09] px-5 py-4 backdrop-blur-md md:px-4 md:py-3">
                     <div className="mb-2 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <MessageCircle className="h-3.5 w-3.5 text-[#8dc0ff]" />
+                        <span className="h-3.5 w-[2px] rounded-full bg-[#8dc0ff]/90 md:hidden" />
                         <p className="text-[11px] font-mono uppercase tracking-[0.13em] text-[#8dc0ff]">Enquiry</p>
                       </div>
                       <span className="text-[10px] text-[#a9bee6]">10:02 AM</span>
                     </div>
                     <p className="text-sm font-medium text-[#e4edff]">Hi, I need bridal makeup for Saturday at 10am. Are you available?</p>
                   </div>
+                  </div>
 
-                  <div className="mx-auto w-full max-w-[245px] rounded-2xl border border-[#4f8ef7]/40 bg-[#4f8ef7]/14 px-4 py-3">
+                  <div className="relative mx-auto w-full max-w-none pl-9 md:max-w-[245px] md:pl-0">
+                    <span className="absolute left-0 top-4 z-10 flex h-[26px] w-[26px] items-center justify-center rounded-full border border-[#4f8ef7]/70 bg-[#4f8ef7]/25 text-[11px] font-semibold text-[#d7e7ff] md:hidden">
+                      2
+                    </span>
+                    <div className="w-full rounded-2xl border border-[#4f8ef7]/40 bg-[#4f8ef7]/14 px-5 py-4 md:px-4 md:py-3">
                     <div className="mb-2 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Bot className="h-3.5 w-3.5 text-[#8dc0ff]" />
+                        <span className="h-3.5 w-[2px] rounded-full bg-[#8dc0ff]/90 md:hidden" />
                         <p className="text-[11px] font-mono uppercase tracking-[0.13em] text-[#8dc0ff]">Auto Reply</p>
                       </div>
                       <span className="text-[10px] text-[#bad0f5]">10:02 AM</span>
@@ -183,10 +196,16 @@ export default function Home() {
                     <p className="text-sm font-medium text-[#e4edff]">Yes, the slot is open. A deposit link is ready to secure your booking.</p>
                     <p className="mt-2 text-[10px] text-[#bad0f5]">Delivered • AI Assistant</p>
                   </div>
+                  </div>
 
-                  <div className="mx-auto w-full max-w-[245px] rounded-2xl ring-1 ring-white/18 bg-white/[0.05] px-4 py-3">
+                  <div className="relative mx-auto w-full max-w-none pl-9 md:max-w-[245px] md:pl-0">
+                    <span className="absolute left-0 top-4 z-10 flex h-[26px] w-[26px] items-center justify-center rounded-full border border-[#4f8ef7]/70 bg-[#4f8ef7]/25 text-[11px] font-semibold text-[#d7e7ff] md:hidden">
+                      3
+                    </span>
+                    <div className="w-full rounded-2xl ring-1 ring-white/18 bg-white/[0.05] px-5 py-4 md:px-4 md:py-3">
                     <div className="mb-2 flex items-center gap-2">
                       <CreditCard className="h-3.5 w-3.5 text-[#8dc0ff]" />
+                      <span className="h-3.5 w-[2px] rounded-full bg-[#8dc0ff]/90 md:hidden" />
                       <p className="text-[11px] font-mono uppercase tracking-[0.13em] text-[#8dc0ff]">Payment</p>
                     </div>
                     <p className="text-sm text-[#d7e4ff]">Deposit request sent: NGN 25,000.</p>
@@ -194,17 +213,24 @@ export default function Home() {
                       Awaiting payment
                     </div>
                   </div>
+                  </div>
 
-                  <div className="mx-auto w-full max-w-[245px] rounded-2xl border border-emerald-300/25 bg-emerald-400/10 px-4 py-3">
+                  <div className="relative mx-auto w-full max-w-none pl-9 md:max-w-[245px] md:pl-0">
+                    <span className="absolute left-0 top-4 z-10 flex h-[26px] w-[26px] items-center justify-center rounded-full border border-emerald-300/70 bg-emerald-300/20 text-[11px] font-semibold text-[#d9fff1] md:hidden">
+                      4
+                    </span>
+                    <div className="w-full rounded-2xl border border-emerald-300/25 bg-emerald-400/10 px-5 py-4 md:px-4 md:py-3">
                     <div className="mb-2 flex items-center gap-2">
                       <BadgeCheck className="h-3.5 w-3.5 text-emerald-200" />
+                      <span className="h-3.5 w-[2px] rounded-full bg-emerald-200/90 md:hidden" />
                       <p className="text-[11px] font-mono uppercase tracking-[0.13em] text-emerald-200">Booked</p>
                     </div>
                     <p className="text-sm font-medium text-[#e7fff6]">Booking confirmed. Client notified. Team calendar updated.</p>
                   </div>
+                  </div>
                 </div>
 
-                <div className="relative mt-5 px-2 py-2 md:px-4">
+                <div className="relative mt-5 hidden px-2 py-2 md:block md:px-4">
                   <div className="absolute left-4 right-4 top-1/2 h-[2px] -translate-y-1/2 bg-gradient-to-r from-[#4f8ef7]/28 via-[#4f8ef7] to-[#4f8ef7]/28" />
                   <div className="relative grid grid-cols-4">
                     {[
