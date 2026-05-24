@@ -18,9 +18,7 @@ export const transporter = nodemailer.createTransport({
     user: MAIL_USER,
     pass: MAIL_PASSWORD,
   },
-  tls: process.env.NODE_ENV !== "production"
-    ? { rejectUnauthorized: false }
-    : undefined,
+  tls: { rejectUnauthorized: false },
 });
 
 export async function sendMail({
