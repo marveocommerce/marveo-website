@@ -1,0 +1,6 @@
+{
+  "redHatDependencyAnalytics.vulnerabilityAlertSeverity": "Warning",
+  "redHatDependencyAnalytics.exclude": [
+    "package.json"
+  ]
+}
