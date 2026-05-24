@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronRight } from "lucide-react";
@@ -155,15 +156,14 @@ export function Navbar() {
 
           {/* ── Logo ─────────────────────────────────────── */}
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="relative w-8 h-8 transition-transform duration-300 group-hover:scale-[1.02]">
-              <div className="absolute inset-0 rounded-lg border border-accent/28 bg-accent/8" />
-              <div className="absolute inset-[6px] rounded-[6px] border border-accent/38" />
-              <div className="absolute left-1/2 top-1.5 h-2.5 w-px -translate-x-1/2 bg-accent/50" />
-              <div className="absolute left-1/2 bottom-1.5 h-2.5 w-px -translate-x-1/2 bg-accent/50" />
-              <div className="absolute left-1.5 top-1/2 h-px w-2.5 -translate-y-1/2 bg-accent/50" />
-              <div className="absolute right-1.5 top-1/2 h-px w-2.5 -translate-y-1/2 bg-accent/50" />
-              <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/85" />
-            </div>
+            <Image
+              src="/logo-mark.svg"
+              alt="Marveo logo mark"
+              width={32}
+              height={32}
+              className="h-8 w-8 transition-transform duration-300 group-hover:scale-[1.02]"
+              priority
+            />
             <span className="font-display font-700 text-[1.08rem] text-text-primary tracking-tight transition-colors duration-200 group-hover:text-accent-bright">
               Marvéo
             </span>

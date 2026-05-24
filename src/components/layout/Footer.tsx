@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const FOOTER_LINKS = {
   Product: [
@@ -31,25 +32,15 @@ export function Footer() {
       <div className="container-shell">
         <div className="mb-10 text-center">
           <Link href="/" className="inline-flex flex-col items-center group">
-            <div className="flex items-center gap-3">
-              <div className="relative w-8 h-8">
-                <div className="absolute inset-0 rounded-lg border border-accent/28 bg-accent/8 shadow-[0_0_24px_rgba(79,142,247,0.18)]" />
-                <div className="absolute inset-[6px] rounded-[6px] border border-accent/35" />
-                <div className="absolute left-1/2 top-1.5 h-2.5 w-px -translate-x-1/2 bg-accent/50" />
-                <div className="absolute left-1/2 bottom-1.5 h-2.5 w-px -translate-x-1/2 bg-accent/50" />
-                <div className="absolute left-1.5 top-1/2 h-px w-2.5 -translate-y-1/2 bg-accent/50" />
-                <div className="absolute right-1.5 top-1/2 h-px w-2.5 -translate-y-1/2 bg-accent/50" />
-                <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/85" />
-              </div>
-              <h2 className="font-display text-[clamp(2rem,6vw,4.8rem)] leading-[0.95] tracking-[-0.045em] font-800 text-text-primary group-hover:text-accent-bright transition-colors">
-                MARVEO
-              </h2>
-            </div>
-            <span className="mt-3 text-helper font-mono text-text-muted">getmarveo.com</span>
+            <Image
+              src="/marveow.png"
+              alt="Marveo"
+              width={660}
+              height={126}
+              className="h-auto w-[min(92vw,540px)] transition-all duration-300 contrast-125 saturate-125 drop-shadow-[0_10px_30px_rgba(255,255,255,0.14)] group-hover:[filter:brightness(0)_saturate(100%)_invert(47%)_sepia(93%)_saturate(1840%)_hue-rotate(201deg)_brightness(101%)_contrast(101%)] group-hover:drop-shadow-[0_12px_34px_rgba(37,99,235,0.45)]"
+              priority={false}
+            />
           </Link>
-          <p className="text-body text-text-secondary max-w-2xl mx-auto mt-4">
-            Connected infrastructure for modern commerce operations.
-          </p>
         </div>
 
         <div className="h-px bg-gradient-to-r from-transparent via-white/18 to-transparent mb-9 md:mb-10" />
