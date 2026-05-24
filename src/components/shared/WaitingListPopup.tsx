@@ -37,7 +37,7 @@ export function WaitingListPopup() {
 
     const timer = window.setTimeout(() => {
       setState("open");
-    }, 2200);
+    }, 1000);
 
     return () => window.clearTimeout(timer);
   }, []);
