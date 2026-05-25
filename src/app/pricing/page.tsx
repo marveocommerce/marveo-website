@@ -780,23 +780,41 @@ function PricingPageContent() {
                     ))}
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedPlanId(plan.id);
-                      const section = document.getElementById("checkout");
-                      section?.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }}
-                    className={cn(
-                      "relative flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all mt-auto",
-                      plan.featured
-                        ? "bg-accent text-white shadow-[0_0_24px_rgba(79,142,247,0.32)] hover:bg-accent-bright"
-                        : "bg-white/5 border border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/9 hover:shadow-[0_16px_36px_-28px_rgba(79,142,247,0.45)]"
+                  <div className="relative mt-auto flex flex-col gap-2.5">
+                    {plan.trialAvailable && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedPlanId(plan.id);
+                          setCheckout((prev) => ({ ...prev, paymentMode: "TRIAL" }));
+                          const section = document.getElementById("checkout");
+                          section?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }}
+                        className="flex items-center justify-center gap-2 rounded-xl bg-success/15 border border-success/30 px-5 py-3 text-sm font-semibold text-success hover:bg-success/25 transition-all"
+                      >
+                        <Sparkles className="h-4 w-4" />
+                        Start {plan.trialDurationDays}-day free trial
+                      </button>
                     )}
-                  >
-                    {plan.cta}
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPlanId(plan.id);
+                        setCheckout((prev) => ({ ...prev, paymentMode: plan.trialAvailable ? prev.paymentMode : "PAID" }));
+                        const section = document.getElementById("checkout");
+                        section?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }}
+                      className={cn(
+                        "flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all",
+                        plan.featured
+                          ? "bg-accent text-white shadow-[0_0_24px_rgba(79,142,247,0.32)] hover:bg-accent-bright"
+                          : "bg-white/5 border border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/9 hover:shadow-[0_16px_36px_-28px_rgba(79,142,247,0.45)]"
+                      )}
+                    >
+                      {plan.cta}
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    </button>
+                  </div>
                 </motion.article>
               );
             })}
