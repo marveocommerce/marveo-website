@@ -704,6 +704,7 @@ function PricingPageContent() {
               const activePrice = billingInterval === "ANNUAL" ? plan.pricing.annual : plan.pricing.monthly;
               const priceLabel = isEnterpriseCustom ? "Custom" : formatBackendPrice(plan.pricing.currency, activePrice.amount);
               const priceSuffix = isEnterpriseCustom ? "" : billingInterval === "ANNUAL" ? "/year" : "/month";
+              const primaryCtaLabel = plan.trialAvailable ? "Continue with paid onboarding" : plan.cta;
 
               return (
                 <motion.article
@@ -800,7 +801,7 @@ function PricingPageContent() {
                       type="button"
                       onClick={() => {
                         setSelectedPlanId(plan.id);
-                        setCheckout((prev) => ({ ...prev, paymentMode: plan.trialAvailable ? prev.paymentMode : "PAID" }));
+                        setCheckout((prev) => ({ ...prev, paymentMode: "PAID" }));
                         const section = document.getElementById("checkout");
                         section?.scrollIntoView({ behavior: "smooth", block: "start" });
                       }}
@@ -811,7 +812,7 @@ function PricingPageContent() {
                           : "bg-white/5 border border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/9 hover:shadow-[0_16px_36px_-28px_rgba(79,142,247,0.45)]"
                       )}
                     >
-                      {plan.cta}
+                      {primaryCtaLabel}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                     </button>
                   </div>
