@@ -750,7 +750,9 @@ function PricingPageContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-7 xl:gap-8 mb-16 items-stretch">
             {plans.map((plan, index) => {
-              const isEnterpriseCustom = plan.id === "enterprise" && plan.pricing.monthly.amount === 0 && plan.pricing.annual.amount === 0;
+              const monthlyFallback = plan.pricing.firstBill?.monthly || plan.pricing.renewal?.monthly || plan.pricing.monthly || { amount: 0, setupFee: 0 };
+              const annualFallback = plan.pricing.firstBill?.annual || plan.pricing.renewal?.annual || plan.pricing.annual || { amount: 0, setupFee: 0 };
+              const isEnterpriseCustom = plan.id === "enterprise" && monthlyFallback.amount === 0 && annualFallback.amount === 0;
               const activePrice = billingInterval === "ANNUAL" ? plan.pricing.firstBill.annual : plan.pricing.firstBill.monthly;
               const renewalPrice = billingInterval === "ANNUAL" ? plan.pricing.renewal.annual : plan.pricing.renewal.monthly;
               const priceLabel = isEnterpriseCustom ? "Custom" : formatBackendPrice(plan.pricing.currency, activePrice.amount);
