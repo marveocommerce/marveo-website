@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const MARVEO_OS_BASE_URL = process.env.MARVEO_OS_BASE_URL || process.env.NEXT_PUBLIC_MARVEO_OS_BASE_URL || 'https://app.getmarveo.com';
+const MARVEO_OS_BASE_URL = process.env.MARVEO_OS_BASE_URL || process.env.NEXT_PUBLIC_MARVEO_OS_BASE_URL || 'https://pilot.getmarveo.com';
 
 export async function GET(req: NextRequest) {
   const country = req.nextUrl.searchParams.get('country') || 'US';
