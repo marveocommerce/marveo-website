@@ -23,10 +23,19 @@ type PricingPlan = {
   id: string;
   name: string;
   pricing: {
+    firstBill: {
+      monthly: IntervalPrice;
+      annual: IntervalPrice;
+    };
+    renewal: {
+      monthly: IntervalPrice;
+      annual: IntervalPrice;
+    };
     monthly: IntervalPrice;
     annual: IntervalPrice;
     currency: string;
     annualDiscountPercent?: number;
+    billingNote?: string;
   };
   description: string;
   features: string[];
@@ -51,9 +60,18 @@ type PlanApiResponse = {
     pricing: {
       country: string;
       currency: string;
+      firstBill: {
+        monthly: IntervalPrice;
+        annual: IntervalPrice;
+      };
+      renewal: {
+        monthly: IntervalPrice;
+        annual: IntervalPrice;
+      };
       monthly: IntervalPrice;
       annual: IntervalPrice;
       annualDiscountPercent?: number;
+      billingNote?: string;
     };
     trial: {
       available: boolean;
@@ -138,9 +156,18 @@ const PRICING_PLANS: PricingPlan[] = [
     name: "Starter Workspace",
     pricing: {
       currency: "NGN",
+      firstBill: {
+        monthly: { amount: 25000, setupFee: 0 },
+        annual: { amount: 250000, setupFee: 0 },
+      },
+      renewal: {
+        monthly: { amount: 25000, setupFee: 0 },
+        annual: { amount: 250000, setupFee: 0 },
+      },
       monthly: { amount: 25000, setupFee: 0 },
       annual: { amount: 250000, setupFee: 0 },
       annualDiscountPercent: 17,
+      billingNote: "After your first billing cycle, this plan renews at the standard rate.",
     },
     description: "For founders, creators, and growing businesses centralizing operational workflows.",
     features: [
@@ -166,9 +193,18 @@ const PRICING_PLANS: PricingPlan[] = [
     name: "Growth Operations",
     pricing: {
       currency: "NGN",
+      firstBill: {
+        monthly: { amount: 85000, setupFee: 0 },
+        annual: { amount: 850000, setupFee: 0 },
+      },
+      renewal: {
+        monthly: { amount: 85000, setupFee: 0 },
+        annual: { amount: 850000, setupFee: 0 },
+      },
       monthly: { amount: 85000, setupFee: 0 },
       annual: { amount: 850000, setupFee: 0 },
       annualDiscountPercent: 17,
+      billingNote: "After your first billing cycle, this plan renews at the standard rate.",
     },
     description: "For businesses managing multiple workflows, teams, and operational systems.",
     features: [
@@ -196,8 +232,17 @@ const PRICING_PLANS: PricingPlan[] = [
     name: "Enterprise Infrastructure",
     pricing: {
       currency: "USD",
+      firstBill: {
+        monthly: { amount: 0, setupFee: 0 },
+        annual: { amount: 0, setupFee: 0 },
+      },
+      renewal: {
+        monthly: { amount: 0, setupFee: 0 },
+        annual: { amount: 0, setupFee: 0 },
+      },
       monthly: { amount: 0, setupFee: 0 },
       annual: { amount: 0, setupFee: 0 },
+      billingNote: "Contact Marveo for a tailored enterprise proposal.",
     },
     description: "For enterprise teams and agencies operating at scale across multiple operational environments.",
     features: [
@@ -405,9 +450,12 @@ function PricingPageContent() {
             name: plan.name,
             pricing: {
               currency: plan.pricing.currency,
+              firstBill: plan.pricing.firstBill,
+              renewal: plan.pricing.renewal,
               monthly: plan.pricing.monthly,
               annual: plan.pricing.annual,
               annualDiscountPercent: plan.pricing.annualDiscountPercent,
+              billingNote: plan.pricing.billingNote,
             },
             description: plan.description,
             features: plan.featureEntitlements,
@@ -626,6 +674,8 @@ function PricingPageContent() {
         error?: string;
         organizationId?: string;
         paymentVerificationStatus?: string;
+        amountDueNow?: number;
+        currency?: string;
       } | null;
       if (!response.ok || !payload) {
         throw new Error(payload?.error || "Failed to start onboarding");
@@ -635,10 +685,10 @@ function PricingPageContent() {
       const verificationProvider = plansSource === "backend"
         ? (selectedPlan.paymentProvider || (countryCode === "NG" ? "PAYSTACK" : "STRIPE"))
         : (countryCode === "NG" ? "PAYSTACK" : "STRIPE");
-      const verificationCurrency = plansSource === "backend" ? selectedPlan.pricing.currency : undefined;
-      const verificationAmount = plansSource === "backend"
-        ? (billingInterval === "ANNUAL" ? selectedPlan.pricing.annual.amount : selectedPlan.pricing.monthly.amount)
-        : undefined;
+      const verificationCurrency = payload.currency || (plansSource === "backend" ? selectedPlan.pricing.currency : undefined);
+      const verificationAmount = payload.amountDueNow ?? (plansSource === "backend"
+        ? (billingInterval === "ANNUAL" ? selectedPlan.pricing.firstBill.annual.amount : selectedPlan.pricing.firstBill.monthly.amount)
+        : undefined);
 
       if (checkout.paymentMode === "PAID") {
         redirectUrl = await verifyPaymentAndResolveRedirect({
@@ -701,7 +751,8 @@ function PricingPageContent() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-7 xl:gap-8 mb-16 items-stretch">
             {plans.map((plan, index) => {
               const isEnterpriseCustom = plan.id === "enterprise" && plan.pricing.monthly.amount === 0 && plan.pricing.annual.amount === 0;
-              const activePrice = billingInterval === "ANNUAL" ? plan.pricing.annual : plan.pricing.monthly;
+              const activePrice = billingInterval === "ANNUAL" ? plan.pricing.firstBill.annual : plan.pricing.firstBill.monthly;
+              const renewalPrice = billingInterval === "ANNUAL" ? plan.pricing.renewal.annual : plan.pricing.renewal.monthly;
               const priceLabel = isEnterpriseCustom ? "Custom" : formatBackendPrice(plan.pricing.currency, activePrice.amount);
               const priceSuffix = isEnterpriseCustom ? "" : billingInterval === "ANNUAL" ? "/year" : "/month";
               const primaryCtaLabel = plan.trialAvailable ? "Continue with paid onboarding" : plan.cta;
@@ -747,7 +798,7 @@ function PricingPageContent() {
                     </div>
                     {plan.id !== "enterprise" && (
                       <p className="text-[11px] font-mono uppercase tracking-[0.14em] text-text-muted mb-1.5">
-                        Starting from
+                        First bill
                       </p>
                     )}
                     <div className="mb-3 flex items-end gap-1.5">
@@ -756,6 +807,12 @@ function PricingPageContent() {
                       </span>
                       {priceSuffix && <span className="pb-1 text-sm text-text-muted">{priceSuffix}</span>}
                     </div>
+                    {plan.id !== "enterprise" && (
+                      <p className="mb-2 text-sm text-text-secondary">
+                        Renews at {formatBackendPrice(plan.pricing.currency, renewalPrice.amount)}
+                        {billingInterval === "ANNUAL" ? " / year" : " / month"}
+                      </p>
+                    )}
                     {billingInterval === "ANNUAL" && plan.pricing.annualDiscountPercent ? (
                       <p className="mb-3 text-xs font-mono uppercase tracking-[0.14em] text-success">
                         Save {plan.pricing.annualDiscountPercent}% annually
@@ -844,6 +901,7 @@ function PricingPageContent() {
                   {effectiveSelectedTemplateId ? (
                     <span> · Template: <span className="font-semibold">{effectiveSelectedTemplateId}</span></span>
                   ) : null}
+                  {selectedPlan?.pricing.billingNote ? <span> · <span className="text-text-secondary">{selectedPlan.pricing.billingNote}</span></span> : null}
                 </div>
               </div>
 
