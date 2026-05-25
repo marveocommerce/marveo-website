@@ -415,8 +415,8 @@ function PricingPageContent() {
   const region = detectedRegion;
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [answers, setAnswers] = useState<CalculatorAnswers>(DEFAULT_CALCULATOR);
-  const [plans, setPlans] = useState<PricingPlan[]>(PRICING_PLANS);
-  const [plansSource, setPlansSource] = useState<"backend" | "fallback">("fallback");
+  const [plans, setPlans] = useState<PricingPlan[]>([]);
+  const [plansSource, setPlansSource] = useState<"loading" | "backend" | "fallback">("loading");
   const [billingInterval, setBillingInterval] = useState<BillingInterval>("MONTHLY");
   const [selectedPlanId, setSelectedPlanId] = useState<string>("starter");
   const [checkout, setCheckout] = useState<CheckoutForm>(DEFAULT_CHECKOUT_FORM);
@@ -436,6 +436,7 @@ function PricingPageContent() {
 
     async function loadPlans() {
       try {
+        setPlansSource("loading");
         setPlansError("");
         // Backend pricing is the commercial source of truth. Static pricing below is fallback-only.
         const response = await fetch(`/api/commercial/plans?country=${countryCode}`, { cache: "no-store" });
@@ -749,6 +750,14 @@ function PricingPageContent() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-7 xl:gap-8 mb-16 items-stretch">
+            {plansSource === "loading" ? (
+              Array.from({ length: 3 }).map((_, index) => (
+                <div
+                  key={`pricing-loading-${index}`}
+                  className="h-[420px] animate-pulse rounded-[1.85rem] border border-white/10 bg-white/[0.03]"
+                />
+              ))
+            ) : null}
             {plans.map((plan, index) => {
               const monthlyFallback = plan.pricing.firstBill?.monthly || plan.pricing.renewal?.monthly || plan.pricing.monthly || { amount: 0, setupFee: 0 };
               const annualFallback = plan.pricing.firstBill?.annual || plan.pricing.renewal?.annual || plan.pricing.annual || { amount: 0, setupFee: 0 };
