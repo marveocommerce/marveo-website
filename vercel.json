@@ -2,6 +2,10 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
+  "env": {
+    "MARVEO_OS_BASE_URL": "https://pilot.getmarveo.com",
+    "NEXT_PUBLIC_MARVEO_OS_BASE_URL": "https://pilot.getmarveo.com"
+  },
   "regions": ["lhr1"],
   "headers": [
     {
