@@ -7,6 +7,7 @@ import { siteConfig } from "@/config/site";
 import { WaitingListPopup } from "@/components/shared/WaitingListPopup";
 import { MarketingScripts } from "@/components/analytics/MarketingScripts";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import SupportChatWidget from "@/components/support/SupportChatWidget";
 
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -145,6 +146,7 @@ export default function RootLayout({
         <div className="noise-overlay" />
         <ThemeProvider>
           {children}
+          <SupportChatWidget />
           <WaitingListPopup />
           <MarketingScripts />
           <Analytics />
