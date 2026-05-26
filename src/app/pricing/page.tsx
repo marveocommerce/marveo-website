@@ -711,6 +711,27 @@ function PricingPageContent() {
 
       continueToRedirect(redirectUrl);
     } catch (err) {
+      const fallbackEmail = checkout.email.trim();
+
+      // If onboarding was persisted but post-processing failed, recover and continue.
+      if (fallbackEmail) {
+        try {
+          const params = new URLSearchParams({ email: fallbackEmail });
+          const recoveryResponse = await fetch(`/api/commercial/onboarding/session?${params.toString()}`, {
+            method: "GET",
+            cache: "no-store",
+          });
+
+          const recoveryPayload = await recoveryResponse.json().catch(() => null) as (RecoveryResponse & { error?: string }) | null;
+          if (recoveryResponse.ok && recoveryPayload?.ok && recoveryPayload.redirectUrl) {
+            continueToRedirect(recoveryPayload.redirectUrl);
+            return;
+          }
+        } catch {
+          // Fall through to original error handling.
+        }
+      }
+
       setCheckoutError(err instanceof Error ? err.message : "Unable to start onboarding right now.");
     } finally {
       setCheckoutBusy(false);
